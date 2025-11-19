@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Agnivolt</title>
+    
+    <script defer src="/__/firebase/12.5.0/firebase-app-compat.js"></script>
+    <script defer src="/__/firebase/12.5.0/firebase-auth-compat.js"></script>
+    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+
+    <style media="screen">
+      body { 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        height: 100vh; 
+        margin: 0; 
+        background: #ECEFF1; 
+        font-family: Inter sans-serif; 
+      }
+      #message { 
+        text-align: center; 
+        padding: 20px;
+        color: rgba(0,0,0,0.6);
+      }
+      #message h1 { font-weight: 300; }
+    </style>
+
+  </head>
+  <body>
+    <div id="message">
+      <h1>Memuat Status Autentikasi...</h1>
+    </div>
+
+    <script>
+      // Dijalankan setelah DOM dimuat dan Firebase SDK tersedia
+      document.addEventListener('DOMContentLoaded', function() {
+        try {
+          // Inisialisasi Firebase App
+          const app = firebase.app();
+          
+          // --- LOGIKA PENGALIHAN UTAMA ---
+          // Pastikan firebase.auth() tersedia sebelum digunakan
+          if (typeof app.auth === 'function') {
+              firebase.auth().onAuthStateChanged(user => {
+                  if (user) {
+                      // 1. PENGGUNA SUDAH LOGIN
+                      console.log("User logged in. Redirecting to dashboard.");
+                      // agnivolt.html adalah dashboard Anda
+                      window.location.replace("/agnivolt.html");
+                  } else {
+                      // 2. PENGGUNA BELUM LOGIN
+                      console.log("User logged out. Redirecting to login/register.");
+                      // login/login.html adalah halaman awal yang Anda inginkan
+                      window.location.replace("/login/login.html");
+                  }
+              });
+          } else {
+              console.error("Firebase Auth is not initialized.");
+              // Fallback jika Auth tidak dimuat
+              document.querySelector('#message h1').textContent = 'Error: Firebase Auth tidak tersedia.';
+          }
+
+        } catch (e) {
+          console.error("Error during Firebase initialization or redirection:", e);
+          document.querySelector('#message h1').textContent = 'Error: Gagal memuat Firebase SDK.';
+        }
+      });
+    </script>
+  </body>
+</html>

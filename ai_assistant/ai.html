@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Assistant</title>
+
+    <!-- Link ke file CSS -->
+    <link rel="stylesheet" href="ai.css" />
+  </head>
+  <body>
+    <!-- Backdrop overlay -->
+    <div class="sidebar-backdrop" onclick="closeChat()"></div>
+
+    <!-- Sidebar Panel -->
+    <div class="ai-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">
+          <i class="icon">💬</i>
+          <h2>AI Assistant</h2>
+        </div>
+        <button class="close-btn" onclick="closeChat()">✖</button>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <div class="message-row user">
+          <div class="message-avatar">👤</div>
+          <div class="message-bubble">Halo, apa kabar?</div>
+        </div>
+
+        <div class="message-row ai">
+          <div class="message-avatar">🤖</div>
+          <div class="message-bubble">Hai! Ada yang bisa saya bantu?</div>
+        </div>
+
+        <div class="message-row ai" id="loading" style="display: none;">
+          <div class="message-avatar">🤖</div>
+          <div class="message-bubble">
+            <div class="typing-indicator">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-footer">
+        <div class="chat-input-wrapper">
+          <input
+            type="text"
+            id="chatInput"
+            placeholder="Tanyakan tentang PLTMH..."
+            class="chat-input"
+            onkeypress="if(event.key === 'Enter') sendMessage()"
+          />
+          <button class="send-btn" onclick="sendMessage()">📩</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Script JS -->
+    <script src="ai.js"></script>
+  </body>
+</html>
