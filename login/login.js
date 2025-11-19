@@ -140,7 +140,7 @@ loginBtn.addEventListener('click', async () => {
     localStorage.setItem("userEmail", userCredential.user.email);
     
     setTimeout(() => {
-      window.location.href = '/agnivolt.html';
+      window.location.href = '/main.html';
     }, 1000);
     
   } catch (error) {
@@ -196,7 +196,7 @@ googleLoginBtn.addEventListener('click', async () => {
     localStorage.setItem("userEmail", userCredential.user.email);
     
     setTimeout(() => {
-      window.location.href = '/agnivolt.html';
+      window.location.href = '/main.html';
     }, 1000);
     
   } catch (error) {
@@ -252,6 +252,6 @@ auth.onAuthStateChanged((user) => {
     localStorage.setItem("loggedIn", "true");
     localStorage.setItem("userEmail", user.email);
     // Auto redirect kalau udah login
-    window.location.href = '/agnivolt.html';
+    window.location.href = '/main.html';
   }
 });

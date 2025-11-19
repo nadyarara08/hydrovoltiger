@@ -72,5 +72,5 @@ logoutBtn.addEventListener("click", async () => {
 
 // === BUTTON KEMBALI KE DASHBOARD ===
 backDashboardBtn.addEventListener("click", () => {
-  window.location.href = "../agnivolt.html"; 
+  window.location.href = "../main.html"; 
 });

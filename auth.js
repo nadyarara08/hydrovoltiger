@@ -6,11 +6,11 @@ export function checkAuthState() {
     if (user) {
       console.log("User logged in:", user.email);
       if (window.location.pathname.includes("login.html") || window.location.pathname.includes("register.html")) {
-        window.location.href = "agnivolt.html";
+        window.location.href = "main.html";
       }
     } else {
       console.log("No user logged in");
-      if (window.location.pathname.includes("agnivolt.html")) {
+      if (window.location.pathname.includes("main.html")) {
         window.location.href = "login.html";
       }
     }
