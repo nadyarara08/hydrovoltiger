@@ -9,13 +9,14 @@ import {
 
 // Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCHvLP731nG0J4emMOrZRhI3wOFfFF7gck", 
-  authDomain: "agnivolt-c61a6.firebaseapp.com", 
-  databaseURL: "https://agnivolt-c61a6-default-rtdb.asia-southeast1.firebasedatabase.app", 
-  projectId: "agnivolt-c61a6", 
-  storageBucket: "agnivolt-c61a6.appspot.com", 
-  messagingSenderId: "453833599474", 
-  appId: "1:453833599474:web:bc3e76ca1deeea0969a36b"
+  apiKey: "AIzaSyDUqA_nkE4Uj14hwEWjonN6HxU26ZxI_Bk",
+  authDomain: "hydrovoltiger-e2d28.firebaseapp.com",
+  databaseURL: "https://hydrovoltiger-e2d28-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "hydrovoltiger-e2d28",
+  storageBucket: "hydrovoltiger-e2d28.firebasestorage.app",
+  messagingSenderId: "239145470302",
+  appId: "1:239145470302:web:ff477c8d2c3837ee2967cf",
+  measurementId: "G-R6VN3R282W"
 };
 
 // Initialize Firebase
