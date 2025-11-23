@@ -5,7 +5,7 @@ import { getDatabase } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-
 import { getStorage } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDUqA_nkE4Uj14hwEW    jonN6HxU26ZxI_Bk",
+  apiKey: "AIzaSyDUqA_nkE4Uj14hwEWjonN6HxU26ZxI_Bk",
   authDomain: "hydrovoltiger-e2d28.firebaseapp.com",
   databaseURL: "https://hydrovoltiger-e2d28-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "hydrovoltiger-e2d28",
