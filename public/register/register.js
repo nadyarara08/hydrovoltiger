@@ -144,7 +144,7 @@ registerForm.addEventListener('submit', async (e) => {
     showToast('Registrasi berhasil! Mengalihkan...', 'success');
     
     setTimeout(() => {
-      window.location.href = '/main.html';
+      window.location.href = '../main.html';
     }, 1000);
     
   } catch (error) {
@@ -186,7 +186,7 @@ googleRegisterBtn.addEventListener('click', async () => {
     showToast('Registrasi dengan Google berhasil!', 'success');
     
     setTimeout(() => {
-      window.location.href = '/main.html';
+      window.location.href = '../main.html';
     }, 1000);
     
   } catch (error) {

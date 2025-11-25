@@ -1,4 +1,4 @@
-import { auth } from "../firebase-init.js";
+import { auth } from "../auth/firebase-init.js";
 import { 
   onAuthStateChanged, 
   deleteUser, 

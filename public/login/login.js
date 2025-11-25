@@ -151,7 +151,7 @@ loginBtn.addEventListener('click', async () => {
     localStorage.setItem("loggedIn", "true");
     localStorage.setItem("userEmail", userCredential.user.email);
 
-    setTimeout(() => window.location.href = '/main.html', 1000);
+    setTimeout(() => window.location.href = '../main.html', 1000);
 
   } catch (error) {
     hideLoading(loading);
@@ -187,7 +187,7 @@ googleLoginBtn.addEventListener('click', async () => {
     localStorage.setItem("loggedIn", "true");
     localStorage.setItem("userEmail", result.user.email);
 
-    setTimeout(() => window.location.href = '/main.html', 1000);
+    setTimeout(() => window.location.href = '../main.html', 1000);
 
   } catch (error) {
     hideLoading(loading);

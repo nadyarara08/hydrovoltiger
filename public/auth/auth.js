@@ -1,4 +1,4 @@
-import { auth } from "./firebase-init.js";
+import { auth } from "../firebase-init.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 export function checkAuthState() {

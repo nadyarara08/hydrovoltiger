@@ -49,10 +49,10 @@
       document.querySelector("#message h1").textContent = "Memuat Firebase...";
 
       // === LAZY LOAD FIREBASE INIT (MODULAR) ===
-      await loadModule("firebase-init.js");
+      await loadModule("./auth/firebase-init.js");
 
       // Module sudah dimuat, ambil modul yg diexport
-      const { auth } = await import("/public/auth/firebase-init.js");
+      const { auth } = await import("./auth/firebase-init.js");
 
       document.querySelector("#message h1").textContent = "Memeriksa Autentikasi...";
 

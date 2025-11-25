@@ -47,7 +47,7 @@ Jika pengguna mengirim pesan yang tidak terkait monitoring, jawab dengan ramah n
     const prompt = `${systemContext}\n\nPertanyaan Pengguna: ${message}`;
 
     try {
-      const response = await fetch("http://localhost:3000/api/health", {
+      const response = await fetch("http://localhost:3000/api/ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt })
@@ -61,7 +61,7 @@ Jika pengguna mengirim pesan yang tidak terkait monitoring, jawab dengan ramah n
       return data.text || "Tidak ada respons dari AI.";
     } catch (error) {
       console.error("AI Response Error:", error);
-      return `**Error**: Terjadi kesalahan saat menghubungi Backend AI.`;
+      return `**Error**: Terjadi kesalahan jaringan saat menghubungi Backend AI.`;
     }
 }
 /**
