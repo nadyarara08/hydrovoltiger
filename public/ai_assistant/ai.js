@@ -47,7 +47,7 @@ Jika pengguna mengirim pesan yang tidak terkait monitoring, jawab dengan ramah n
     const prompt = `${systemContext}\n\nPertanyaan Pengguna: ${message}`;
 
     try {
-      const response = await fetch("http://localhost:3000/api/ai", {
+      const response = await fetch("hydrovoltiger-production.up.railway.app", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt })
