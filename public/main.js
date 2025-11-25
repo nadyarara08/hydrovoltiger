@@ -1,6 +1,6 @@
-import { db } from "./firebase-init.js";
+import { db } from "./auth/firebase-init.js";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-import { auth } from "./firebase-init.js";
+import { auth } from "./auth/firebase-init.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import { initAiAssistant } from "./ai_assistant/ai.js";
 
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
       startDashboard(); // Mulai logika dasbor
       initAiAssistant(initial); // Mulai logika AI Assistant
     } else {
-      window.location.href = "./login/login.html";
+      window.location.href = "login.html";
     }
   });
 

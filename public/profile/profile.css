@@ -1,0 +1,138 @@
+/* ===== Container ===== */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+  background: #050170;
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+/* ===== Header ===== */
+.header {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 15px 20px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+/* ===== Profile Card ===== */
+.profile-card {
+  background: rgba(255,255,255,0.95);
+  border-radius: 24px;
+  padding: 50px 40px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  width: 90%;
+  max-width: 400px;
+  transition: transform 0.3s ease;
+}
+
+.profile-card:hover {
+  transform: translateY(-5px);
+}
+
+/* ===== Avatar ===== */
+.avatar-large {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  margin: 0 auto 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;
+  font-weight: 700;
+  color: white;
+  text-transform: uppercase;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(102,126,234,0.7); }
+  50% { box-shadow: 0 0 0 20px rgba(102,126,234,0); }
+}
+
+/* ===== Nama & Email ===== */
+h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 8px;
+}
+
+.email {
+  color: #718096;
+  font-size: 0.95rem;
+  margin-bottom: 35px;
+}
+
+/* ===== Actions ===== */
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Button Primary */
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: scale(1.02);
+  box-shadow: 0 10px 25px rgba(102,126,234,0.4);
+}
+
+/* Button Danger */
+.btn-danger {
+  background: white;
+  color: #e53e3e;
+  border: 2px solid #e53e3e;
+  border-radius: 12px;
+  padding: 14px 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-danger:hover {
+  transform: scale(1.02);
+  background-color: #e53e3e;
+  color: white;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 480px) {
+  .profile-card { padding: 40px 30px; }
+  .avatar-large { width: 100px; height: 100px; font-size: 2.5rem; }
+  h2 { font-size: 1.5rem; }
+  .header h1 { font-size: 1.5rem; }
+}
