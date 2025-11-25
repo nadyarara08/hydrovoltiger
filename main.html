@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agnivolt - PLTMH Monitoring</title>
+  <title>Hydrovoltiger</title>
   <link rel="stylesheet" href="main.css">
   
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -15,9 +15,8 @@
             <div class="header">
                 <div class="header-top">
                     <div class="header-left">
-                        <img src="assets/logo.png" class="logo">
                         <div class="header-title-wrapper">
-                            <h1>Sistem Monitoring PLTMH Berbasis IoT</h1>
+                            <h1>Sistem Monitoring Berbasis IoT</h1>
                             <div id="connectionIndicator" class="connection-indicator">
                                 <span id="indicatorDot" class="dot"></span>
                                 <span id="indicatorText">Cek koneksi...</span>
@@ -79,7 +78,8 @@
                 <div class="status-card rpm">
                     <div class="status-info">
                         <h3>Kecepatan Turbin</h3>
-                        <div class="status-value" id="rpm">1500</div> <div class="status-unit">RPM</div>
+                        <div class="status-value" id="rpm">1500</div>
+                        <div class="status-unit">RPM</div>
                     </div>
                 </div>
             </div>
@@ -91,8 +91,32 @@
                         <button class="tab-button" data-chart-type="daily">Harian</button>
                         <button class="tab-button" data-chart-type="weekly">Mingguan</button>
                     </div>
-                    <h2 id="chartTitle">Real-time Data</h2> 
-                    <canvas id="realtimeChart"></canvas>
+                    <h2 id="chartTitle">Real-time Data</h2>
+                    
+                    <div class="chart-wrapper">
+                        <canvas id="realtimeChart"></canvas>
+                    </div>
+
+                    <div class="data-table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Tegangan (V)</th>
+                                    <th>Arus (A)</th>
+                                    <th>Daya (W)</th>
+                                    <th>RPM</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dataTableBody">
+                                <tr>
+                                    <td class="value-voltage">-</td>
+                                    <td class="value-current">-</td>
+                                    <td class="value-power">-</td>
+                                    <td class="value-rpm">-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <div class="summary-cards">
@@ -122,7 +146,7 @@
         </div>
 
         <footer class="footer">
-            <p>© 2025 Agnivolt • Sistem Monitoring PLTMH Berbasis IoT</p>
+            <p>Hydrovoltiger - Platform Monitoring IoT PLTMH</p>
         </footer>
 
         <div class="ai-overlay" id="aiOverlay">
@@ -142,13 +166,13 @@
                 <div class="chat-messages" id="chatMessages">
                     <div class="message-row ai">
                         <div class="message-avatar">🤖</div>
-                        <div class="message-bubble">Halo! Saya AI Assistant Anda. Ada yang bisa saya bantu terkait monitoring PLTMH Anda?</div>
+                        <div class="message-bubble">Halo! Saya AI Assistant Anda. Ada yang bisa saya bantu terkait monitoring Anda?</div>
                     </div>
                 </div>
 
                 <div class="chat-footer">
                     <div class="chat-input-wrapper">
-                        <input type="text" id="chatInput" placeholder="Tanyakan tentang PLTMH..." class="chat-input">
+                        <input type="text" id="chatInput" placeholder="Tanyakan tentang Hydrovoltiger..." class="chat-input">
                         <button class="send-btn" id="sendAiMessageButton" disabled>
                             <ion-icon name="send"></ion-icon>
                         </button>

@@ -93,6 +93,57 @@ document.addEventListener("DOMContentLoaded", () => {
       chart.update();
     }
 
+    // === UPDATE DATA TABLE FUNCTION ===
+    function updateDataTable() {
+      const tableBody = document.getElementById('dataTableBody');
+      const activeTab = document.querySelector(".tab-button.active");
+      
+      if (!activeTab || !tableBody) return;
+      
+      const chartType = activeTab.dataset.chartType;
+      let dataSource;
+      
+      if (chartType === "realtime") {
+        dataSource = realtimeData;
+      } else if (chartType === "daily") {
+        dataSource = dailyData;
+      } else if (chartType === "weekly") {
+        dataSource = weeklyData;
+      }
+      
+      // Clear existing rows
+      tableBody.innerHTML = '';
+      
+      // Get the latest 5 data points
+      const dataLength = dataSource.labels.length;
+      const startIndex = Math.max(0, dataLength - 5);
+      
+      // If no data, show empty state
+      if (dataLength === 0) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="value-voltage">-</td>
+          <td class="value-current">-</td>
+          <td class="value-power">-</td>
+          <td class="value-rpm">-</td>
+        `;
+        tableBody.appendChild(row);
+        return;
+      }
+      
+      // Populate table with latest data
+      for (let i = startIndex; i < dataLength; i++) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="value-voltage">${dataSource.voltage[i]?.toFixed(2) || '-'}</td>
+          <td class="value-current">${dataSource.current[i]?.toFixed(2) || '-'}</td>
+          <td class="value-power">${dataSource.power[i]?.toFixed(2) || '-'}</td>
+          <td class="value-rpm">${dataSource.rpm[i]?.toFixed(2) || '-'}</td>
+        `;
+        tableBody.appendChild(row);
+      }
+    }
+
     // === REALTIME DATABASE ===
     const pltmhRef = ref(db, "PLTMH");
 
@@ -113,6 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("rpm").textContent = rpm.toFixed(2);
       document.getElementById("totalPower").textContent = totalEnergy.toFixed(4);
       
+      // Duration calculation
       let durationText = "00:00:00";
       if (rpm > 0) {
         if (turbineStartTime === null) {
@@ -138,13 +190,16 @@ document.addEventListener("DOMContentLoaded", () => {
       realtimeData.power.push(power);
       realtimeData.rpm.push(rpm);
 
+      // Keep only last 10 data points
       if (realtimeData.labels.length > 10) {
         Object.keys(realtimeData).forEach((key) => realtimeData[key].shift());
       }
 
+      // Update chart and table if realtime tab is active
       const activeTab = document.querySelector(".tab-button.active");
       if (activeTab && activeTab.dataset.chartType === "realtime") {
         setChartData(realtimeData);
+        updateDataTable(); // Update table with new data
       }
     });
 
@@ -158,18 +213,22 @@ document.addEventListener("DOMContentLoaded", () => {
         if (btn.dataset.chartType === "realtime") {
           chartTitle.textContent = "Grafik Monitoring Real-time";
           setChartData(realtimeData);
+          updateDataTable(); // Update table when switching to realtime
         } else if (btn.dataset.chartType === "daily") {
           chartTitle.textContent = "Grafik Monitoring Harian";
           setChartData(dailyData);
+          updateDataTable(); // Update table when switching to daily
         } else if (btn.dataset.chartType === "weekly") {
           chartTitle.textContent = "Grafik Monitoring Mingguan";
           setChartData(weeklyData);
+          updateDataTable(); // Update table when switching to weekly
         }
       });
     });
 
     // Set awal
     setChartData(realtimeData);
+    updateDataTable(); // Initialize table on load
   }
 
   // === DROPDOWN PROFILE ===
@@ -179,13 +238,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   userInfoButton.addEventListener("click", () => {
     profileDropdown.classList.toggle("show");
-    dropdownIcon.classList.toggle("rotate");
+    dropdownIcon.classList.toggle("rotated");
   });
 
   document.addEventListener("click", (e) => {
     if (!userInfoButton.contains(e.target) && !profileDropdown.contains(e.target)) {
       profileDropdown.classList.remove("show");
-      dropdownIcon.classList.remove("rotate");
+      dropdownIcon.classList.remove("rotated");
     }
   });
 
@@ -194,7 +253,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const settingsItem = profileDropdown.querySelector(".dropdown-item:nth-child(2)");
   const logoutItem = profileDropdown.querySelector(".dropdown-item.logout");
 
-  profileItem.addEventListener("click", () => window.location.href = "/profile/profile.html");
+  profileItem.addEventListener("click", () => {
+    window.location.href = "./profile/profile.html";
+  });
 
   settingsItem.addEventListener("click", () => {
     const toast = document.createElement("div");
@@ -210,14 +271,27 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   logoutItem.addEventListener("click", () => {
-    signOut(auth) 
+    const toast = document.createElement("div");
+    toast.className = "toast-message";
+    toast.textContent = "Memproses logout...";
+    document.body.appendChild(toast);
+    
+    setTimeout(() => toast.classList.add("show"), 100);
+
+    signOut(auth)
       .then(() => {
         toast.textContent = "Logout berhasil!";
-        window.location.href = "/login/login.html";
+        setTimeout(() => {
+          window.location.href = "./login/login.html";
+        }, 700);
       })
       .catch((error) => {
-        console.log("Gagal logout:", error);
+        console.error("Gagal logout:", error);
         toast.textContent = "Terjadi kesalahan saat logout. Silahkan coba lagi.";
+        setTimeout(() => {
+          toast.classList.remove("show");
+          setTimeout(() => toast.remove(), 300);
+        }, 2000);
       });
   });
 });
