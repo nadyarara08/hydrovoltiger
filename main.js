@@ -209,7 +209,177 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 2000);
   });
 
+  lo// === FIXED main.js ===
+// This version includes:
+// - Fix missing toast variable
+// - Safer redirect paths
+// - Cleaned logout logic
+// - Improved event handling
+
+import { db } from "./firebase-init.js";
+import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+import { auth } from "./firebase-init.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import { initAiAssistant } from "./ai_assistant/ai.js";
+
+// === Saat halaman siap ===
+document.addEventListener("DOMContentLoaded", () => {
+  const miniAvatar = document.querySelector(".user-avatar-header");
+  const userNameEl = document.querySelector(".user-name");
+
+  // ===== CONNECTION INDICATOR =====
+  const indicator = document.getElementById("connectionIndicator");
+  const indicatorText = document.getElementById("indicatorText");
+
+  const connectionRef = ref(db, ".info/connected");
+  onValue(connectionRef, (snapshot) => {
+    const connected = snapshot.val();
+    if (connected) {
+      indicator.classList.add("online");
+      indicator.classList.remove("offline");
+      indicatorText.textContent = "Terhubung";
+    } else {
+      indicator.classList.add("offline");
+      indicator.classList.remove("online");
+      indicatorText.textContent = "Tidak terhubung";
+    }
+  });
+
+  // === LOGIN CHECK ===
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      const name = user.displayName || user.email.split("@")[0];
+      const initial = name.charAt(0).toUpperCase();
+
+      miniAvatar.textContent = initial;
+      userNameEl.textContent = name;
+
+      miniAvatar.style.visibility = "visible";
+      userNameEl.style.visibility = "visible";
+
+      startDashboard();
+      initAiAssistant(initial);
+    } else {
+      window.location.href = "./login/login.html";
+    }
+  });
+
+  // === LOGIKA DASHBOARD ===
+  function startDashboard() {
+    let realtimeData = { labels: [], voltage: [], current: [], power: [], rpm: [] };
+    let turbineStartTime = null;
+
+    const ctx = document.getElementById("realtimeChart").getContext("2d");
+    const chart = new Chart(ctx, {
+      type: "line",
+      data: { labels: [], datasets: [] },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { title: { display: true, text: "V / A / W" } },
+          y1: { position: "right", title: { display: true, text: "RPM" }, grid: { drawOnChartArea: false } }
+        },
+        plugins: { legend: { display: true, position: "top" } }
+      }
+    });
+
+    function setChartData(source) {
+      chart.data.labels = source.labels;
+      chart.data.datasets = [
+        { label: "Tegangan (V)", data: source.voltage, borderColor: "#e53e3e", tension: 0.4 },
+        { label: "Arus (A)", data: source.current, borderColor: "#3182ce", tension: 0.4 },
+        { label: "Daya (W)", data: source.power, borderColor: "#38a169", tension: 0.4 },
+        { label: "RPM", data: source.rpm, borderColor: "#d69e2e", yAxisID: "y1", tension: 0.4 }
+      ];
+      chart.update();
+    }
+
+    const pltmhRef = ref(db, "PLTMH");
+    onValue(pltmhRef, (snapshot) => {
+      if (!snapshot.exists()) return;
+      const data = snapshot.val();
+
+      const voltage = data.Tegangan_V || 0;
+      const current = data.Arus_mA || 0;
+      const power = data.Daya_mW || 0;
+      const rpm = data.RPM_Turbin || 0;
+      const totalEnergy = data.Total_Energi_mWh || 0;
+
+      document.getElementById("voltage").textContent = voltage.toFixed(2);
+      document.getElementById("current").textContent = current.toFixed(2);
+      document.getElementById("power").textContent = power.toFixed(2);
+      document.getElementById("rpm").textContent = rpm.toFixed(2);
+      document.getElementById("totalPower").textContent = totalEnergy.toFixed(4);
+
+      let durationText = "00:00:00";
+      if (rpm > 0) {
+        if (!turbineStartTime) turbineStartTime = new Date();
+        const durationMs = new Date() - turbineStartTime;
+        const h = Math.floor(durationMs / 3600000);
+        const m = Math.floor((durationMs % 3600000) / 60000);
+        const s = Math.floor((durationMs % 60000) / 1000);
+        durationText = `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+      } else {
+        turbineStartTime = null;
+      }
+
+      document.getElementById("duration").textContent = durationText;
+      document.getElementById("efficiency").textContent = (85 + Math.random() * 10).toFixed(0);
+
+      const timeLabel = new Date().toLocaleTimeString();
+      realtimeData.labels.push(timeLabel);
+      realtimeData.voltage.push(voltage);
+      realtimeData.current.push(current);
+      realtimeData.power.push(power);
+      realtimeData.rpm.push(rpm);
+
+      if (realtimeData.labels.length > 10) {
+        Object.keys(realtimeData).forEach(k => realtimeData[k].shift());
+      }
+
+      const activeTab = document.querySelector(".tab-button.active");
+      if (activeTab.dataset.chartType === "realtime") setChartData(realtimeData);
+    });
+
+    setChartData(realtimeData);
+  }
+
+  // === DROPDOWN PROFILE ===
+  const userInfoButton = document.getElementById("userInfoButton");
+  const profileDropdown = document.getElementById("profileDropdown");
+  const dropdownIcon = document.getElementById("dropdownIcon");
+
+  userInfoButton.addEventListener("click", () => {
+    profileDropdown.classList.toggle("show");
+    dropdownIcon.classList.toggle("rotated");
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!userInfoButton.contains(e.target) && !profileDropdown.contains(e.target)) {
+      profileDropdown.classList.remove("show");
+      dropdownIcon.classList.remove("rotated");
+    }
+  });
+
+  // === LOGOUT ===
+  const logoutItem = profileDropdown.querySelector(".dropdown-item.logout");
   logoutItem.addEventListener("click", () => {
+    const toast = document.createElement("div");
+    toast.className = "toast-message";
+    document.body.appendChild(toast);
+
+    signOut(auth)
+      .then(() => {
+        toast.textContent = "Logout berhasil!";
+        setTimeout(() => window.location.href = "./login/login.html", 700);
+      })
+      .catch((error) => {
+        toast.textContent = "Gagal logout. Coba lagi.";
+        console.error(error);
+      });
+  });
+});goutItem.addEventListener("click", () => {
     signOut(auth) 
       .then(() => {
         toast.textContent = "Logout berhasil!";
