@@ -1,6 +1,6 @@
 # Hydrovoltiger
 
-Sistem monitoring PLTMH (Pembangkit Listrik Tenaga Mikrohidro) berbasis web, dengan integrasi Firebase untuk autentikasi dan database, serta AI Assistant berbasis Gemini untuk analisis dan penjelasan kondisi sistem.
+Sistem monitoring berbasis web, dengan integrasi Firebase untuk autentikasi dan database, serta AI Assistant berbasis Gemini untuk analisis dan penjelasan kondisi sistem.
 
 Repo ini berisi:
 - Halaman login, dashboard utama, dan komponen pendukung (HTML/CSS/JS).
