@@ -1,14 +1,6 @@
-import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 import showdown from "https://esm.run/showdown";
 
 const converter = new showdown.Converter();
-
-// === KONSTANTA AI ===
-// Catatan: Mengekspos API Key di sisi klien tidak aman dan dapat menyebabkan penyalahgunaan.
-const GEMINI_API_KEY = "AIzaSyCddN6gt5EDbABLuuz2cBgMMneOalZcyZg"; 
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-// Menggunakan model yang Anda sarankan. Jika terjadi error 404, model ini mungkin tidak tersedia untuk API key Anda.
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 /**
  * Menghasilkan respons dari AI berdasarkan pesan pengguna.
@@ -55,21 +47,23 @@ Jika pengguna mengirim pesan yang tidak terkait monitoring, jawab dengan ramah n
     const prompt = `${systemContext}\n\nPertanyaan Pengguna: ${message}`;
 
     try {
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      return response.text() || "Tidak ada respons dari AI.";
+      const response = await fetch("http://localhost:3000/api/ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt })
+      });
+
+      if (!response.ok) {
+        return `**Error**: Gagal menghubungi backend AI (status ${response.status}).`;
+      }
+
+      const data = await response.json();
+      return data.text || "Tidak ada respons dari AI.";
     } catch (error) {
       console.error("AI Response Error:", error);
-      if (error.message.includes("404")) {
-          return `**Error**: Model AI ('gemini-2.0-flash') tidak ditemukan. Ini berarti model tersebut tidak tersedia untuk API Key Anda.`;
-      }
-      if (error.message.includes("429")) {
-          return `**Error**: Terlalu banyak permintaan ke AI dalam waktu singkat. Kuota Anda mungkin habis. Silakan coba lagi nanti.`;
-      }
-      return `**Error**: Terjadi kesalahan saat menghubungi AI. Silakan periksa konsol untuk detailnya.`;
+      return `**Error**: Terjadi kesalahan saat menghubungi Backend AI.`;
     }
 }
-
 /**
  * Menambahkan pesan ke dalam kotak chat dan merender Markdown untuk respons AI.
  * @param {('user'|'ai')} sender Pengirim pesan.
