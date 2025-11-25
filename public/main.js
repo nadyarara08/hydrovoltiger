@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
       startDashboard(); // Mulai logika dasbor
       initAiAssistant(initial); // Mulai logika AI Assistant
     } else {
-      window.location.href = "login.html";
+      window.location.href = "./login/login.html";
     }
   });
 
