@@ -42,7 +42,7 @@ Contoh Format Output:
 - Pantau tegangan dalam 10 menit ke depan.
 
 Jika pengguna mengirim pesan yang tidak terkait monitoring, jawab dengan ramah namun tetap relevan dengan konteks sistem Anda.
-`;
+`; 
 
     const prompt = `${systemContext}\n\nPertanyaan Pengguna: ${message}`;
 
