@@ -6,8 +6,8 @@ import { initAiAssistant } from "./ai_assistant/ai.js";
 
 // === Saat halaman siap ===
 document.addEventListener("DOMContentLoaded", () => {
-  const miniAvatar = document.querySelector(".user-avatar-header");
-  const userNameEl = document.querySelector(".user-name");
+  const userAvatarNav = document.getElementById("userAvatarNav");
+  const userNameNav = document.getElementById("userNameNav");
 
   // ======== CONNECTION INDICATOR ========
   const indicator = document.getElementById("connectionIndicator");
@@ -33,11 +33,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (user) {
       const name = user.displayName || user.email.split("@")[0];
       const initial = name.charAt(0).toUpperCase();
-      miniAvatar.textContent = initial;
-      userNameEl.textContent = name;
-
-      miniAvatar.style.visibility = "visible";
-      userNameEl.style.visibility = "visible";
+      
+      if (userAvatarNav) userAvatarNav.textContent = initial;
+      if (userNameNav) userNameNav.textContent = name;
 
       startDashboard(); // Mulai logika dasbor
       initAiAssistant(initial); // Mulai logika AI Assistant
@@ -231,67 +229,68 @@ document.addEventListener("DOMContentLoaded", () => {
     updateDataTable(); // Initialize table on load
   }
 
-  // === DROPDOWN PROFILE ===
+  // === DROPDOWN PROFILE SIDEBAR ===
   const userInfoButton = document.getElementById("userInfoButton");
-  const profileDropdown = document.getElementById("profileDropdown");
-  const dropdownIcon = document.getElementById("dropdownIcon");
+  const profileDropdownNav = document.getElementById("profileDropdownNav");
+  const dropdownIconNav = document.getElementById("dropdownIconNav");
 
-  userInfoButton.addEventListener("click", () => {
-    profileDropdown.classList.toggle("show");
-    dropdownIcon.classList.toggle("rotated");
-  });
+  if (userInfoButton && profileDropdownNav) {
+    userInfoButton.addEventListener("click", () => {
+      profileDropdownNav.classList.toggle("show");
+      dropdownIconNav.classList.toggle("rotated");
+    });
 
-  document.addEventListener("click", (e) => {
-    if (!userInfoButton.contains(e.target) && !profileDropdown.contains(e.target)) {
-      profileDropdown.classList.remove("show");
-      dropdownIcon.classList.remove("rotated");
-    }
-  });
+    document.addEventListener("click", (e) => {
+      if (!userInfoButton.contains(e.target) && !profileDropdownNav.contains(e.target)) {
+        profileDropdownNav.classList.remove("show");
+        dropdownIconNav.classList.remove("rotated");
+      }
+    });
 
-  // === AKSI TOMBOL DROPDOWN ===
-  const profileItem = profileDropdown.querySelector(".dropdown-item:nth-child(1)");
-  const settingsItem = profileDropdown.querySelector(".dropdown-item:nth-child(2)");
-  const logoutItem = profileDropdown.querySelector(".dropdown-item.logout");
+    // === AKSI TOMBOL DROPDOWN ===
+    const settingsItemNav = profileDropdownNav.querySelector(".dropdown-item-nav:nth-child(1)");
+    const logoutItemNav = profileDropdownNav.querySelector(".dropdown-item-nav.logout");
 
-  profileItem.addEventListener("click", () => {
-    window.location.href = "./profile/profile.html";
-  });
+    if (settingsItemNav) {
+      settingsItemNav.addEventListener("click", () => {
+        const toast = document.createElement("div");
+        toast.className = "toast-message";
+        toast.textContent = "Pengaturan belum tersedia";
+        document.body.appendChild(toast);
 
-  settingsItem.addEventListener("click", () => {
-    const toast = document.createElement("div");
-    toast.className = "toast-message";
-    toast.textContent = "Pengaturan belum tersedia";
-    document.body.appendChild(toast);
-
-    setTimeout(() => toast.classList.add("show"), 100);
-    setTimeout(() => {
-      toast.classList.remove("show");
-      setTimeout(() => toast.remove(), 300);
-    }, 2000);
-  });
-
-  logoutItem.addEventListener("click", () => {
-    const toast = document.createElement("div");
-    toast.className = "toast-message";
-    toast.textContent = "Memproses logout...";
-    document.body.appendChild(toast);
-    
-    setTimeout(() => toast.classList.add("show"), 100);
-
-    signOut(auth)
-      .then(() => {
-        toast.textContent = "Logout berhasil!";
-        setTimeout(() => {
-          window.location.href = "./login/login.html";
-        }, 700);
-      })
-      .catch((error) => {
-        console.error("Gagal logout:", error);
-        toast.textContent = "Terjadi kesalahan saat logout. Silahkan coba lagi.";
+        setTimeout(() => toast.classList.add("show"), 100);
         setTimeout(() => {
           toast.classList.remove("show");
           setTimeout(() => toast.remove(), 300);
         }, 2000);
       });
-  });
+    }
+
+    if (logoutItemNav) {
+      logoutItemNav.addEventListener("click", () => {
+        const toast = document.createElement("div");
+        toast.className = "toast-message";
+        toast.textContent = "Memproses logout...";
+        document.body.appendChild(toast);
+        
+        setTimeout(() => toast.classList.add("show"), 100);
+
+        signOut(auth)
+          .then(() => {
+            toast.textContent = "Logout berhasil!";
+            setTimeout(() => {
+              window.location.href = "./login/login.html";
+            }, 700);
+          })
+          .catch((error) => {
+            console.error("Gagal logout:", error);
+            toast.textContent = "Terjadi kesalahan saat logout. Silahkan coba lagi.";
+            setTimeout(() => {
+              toast.classList.remove("show");
+              setTimeout(() => toast.remove(), 300);
+            }, 2000);
+          });
+      });
+    }
+  }
 });

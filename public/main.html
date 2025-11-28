@@ -11,143 +11,191 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <div class="container">
-            <div class="header">
-                <div class="header-top">
-                    <div class="header-left">
-                        <div class="header-title-wrapper">
-                            <h1>Sistem Monitoring Berbasis IoT</h1>
-                            <div id="connectionIndicator" class="connection-indicator">
-                                <span id="indicatorDot" class="dot"></span>
-                                <span id="indicatorText">Cek koneksi...</span>
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar-nav">
+            <div class="nav-header">
+                <div class="nav-logo">
+                    <ion-icon name="water-outline"></ion-icon>
+                    <span>Hydrovoltiger</span>
+                </div>
+            </div>
+
+            <div class="nav-menu">
+                <a href="main.html" class="nav-item active">
+                    <ion-icon name="home-outline"></ion-icon>
+                    <span>Beranda</span>
+                </a>
+                <a href="./profile/profile.html" class="nav-item">
+                    <ion-icon name="person-outline"></ion-icon>
+                    <span>Profil</span>
+                </a>
+                <a href="./device/device.html" class="nav-item">
+                    <ion-icon name="hardware-chip-outline"></ion-icon>
+                    <span>Device</span>
+                </a>
+                <a href="./news/news.html" class="nav-item">
+                    <ion-icon name="newspaper-outline"></ion-icon>
+                    <span>News</span>
+                </a>
+            </div>
+
+            <div class="nav-footer">
+                <div class="user-info-nav" id="userInfoButton">
+                    <div class="user-avatar-nav" id="userAvatarNav">U</div>
+                    <div class="user-details-nav">
+                        <span class="user-name-nav" id="userNameNav">User</span>
+                        <span class="user-status">Online</span>
+                    </div>
+                    <ion-icon name="chevron-down-outline" class="dropdown-icon-nav" id="dropdownIconNav"></ion-icon>
+                </div>
+
+                <div class="profile-dropdown-nav" id="profileDropdownNav">
+                    <div class="dropdown-item-nav">
+                        <ion-icon name="settings-outline"></ion-icon>
+                        <span>Pengaturan</span>
+                    </div>
+                    <div class="dropdown-divider-nav"></div>
+                    <div class="dropdown-item-nav logout">
+                        <ion-icon name="log-out-outline"></ion-icon>
+                        <span>Keluar</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Mobile Bottom Navigation -->
+        <nav class="mobile-nav">
+            <a href="main.html" class="mobile-nav-item active">
+                <ion-icon name="home-outline"></ion-icon>
+                <span>Beranda</span>
+            </a>
+            <a href="./profile/profile.html" class="mobile-nav-item">
+                <ion-icon name="person-outline"></ion-icon>
+                <span>Profil</span>
+            </a>
+            <a href="./device/device.html" class="mobile-nav-item">
+                <ion-icon name="hardware-chip-outline"></ion-icon>
+                <span>Device</span>
+            </a>
+            <a href="./news/news.html" class="mobile-nav-item">
+                <ion-icon name="newspaper-outline"></ion-icon>
+                <span>News</span>
+            </a>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="container">
+                <div class="header">
+                    <div class="header-top">
+                        <div class="header-left">
+                            <div class="header-title-wrapper">
+                                <h1>Sistem Monitoring Berbasis IoT</h1>
+                                <div id="connectionIndicator" class="connection-indicator">
+                                    <span id="indicatorDot" class="dot"></span>
+                                    <span id="indicatorText">Cek koneksi...</span>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="header-right">
-                        <div class="user-info" id="userInfoButton">
-                            <div class="user-details">
-                                <span class="greeting">Halo,</span>
-                                <span class="user-name">Pengguna Uji Coba</span> 
-                            </div>
-                            <div class="user-avatar-header">PU</div> 
-                            <ion-icon name="chevron-down-outline" class="dropdown-icon" id="dropdownIcon"></ion-icon>
-                        </div>
-
-                        <div class="profile-dropdown" id="profileDropdown">
-                            <div class="dropdown-item">
-                                <ion-icon name="person-outline"></ion-icon>
-                                <span>Profil Saya</span>
-                            </div>
-                            <div class="dropdown-item">
-                                <ion-icon name="settings-outline"></ion-icon>
-                                <span>Pengaturan</span>
-                            </div>
-                            <div class="dropdown-divider"></div>
-                            <div class="dropdown-item logout">
-                                <ion-icon name="log-out-outline"></ion-icon>
-                                <span>Keluar</span>
-                            </div>
+                <div class="status-bar">
+                    <div class="status-card voltage">
+                        <div class="status-info">
+                            <h3>Tegangan</h3>
+                            <div class="status-value" id="voltage">0</div> 
+                            <div class="status-unit">Volt</div>
                         </div>
                     </div>
+                    <div class="status-card current">
+                        <div class="status-info">
+                            <h3>Arus Listrik</h3>
+                            <div class="status-value" id="current">0</div> 
+                            <div class="status-unit">Ampere</div>
+                        </div>
+                    </div>
+                    <div class="status-card power">
+                        <div class="status-info">
+                            <h3>Daya</h3>
+                            <div class="status-value" id="power">0</div> 
+                            <div class="status-unit">Watt</div>
+                        </div>
+                    </div>
+                    <div class="status-card rpm">
+                        <div class="status-info">
+                            <h3>Kecepatan Turbin</h3>
+                            <div class="status-value" id="rpm">1500</div>
+                            <div class="status-unit">RPM</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid">
+                    <div class="chart-container">
+                        <div class="chart-tabs">
+                            <button class="tab-button active" data-chart-type="realtime">Real-time</button>
+                            <button class="tab-button" data-chart-type="daily">Harian</button>
+                            <button class="tab-button" data-chart-type="weekly">Mingguan</button>
+                        </div>
+                        <h2 id="chartTitle">Real-time Data</h2>
+                        
+                        <div class="chart-wrapper">
+                            <canvas id="realtimeChart"></canvas>
+                        </div>
+
+                        <div class="data-table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tegangan (V)</th>
+                                        <th>Arus (A)</th>
+                                        <th>Daya (W)</th>
+                                        <th>RPM</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dataTableBody">
+                                    <tr>
+                                        <td class="value-voltage">-</td>
+                                        <td class="value-current">-</td>
+                                        <td class="value-power">-</td>
+                                        <td class="value-rpm">-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="summary-cards">
+                        <div class="summary-card">
+                            <h3>Durasi Penggunaan Hari Ini</h3>
+                            <div class="summary-value" id="duration">0</div> 
+                            <div class="status-unit">Jam</div>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Total Daya Dihasilkan</h3>
+                            <div class="summary-value" id="totalPower">0</div> 
+                            <div class="status-unit">kWh</div>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Efisiensi</h3>
+                            <div class="summary-value" id="efficiency">0</div> 
+                            <div class="status-unit">%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fab-container">
+                    <button class="ai-fab" id="openAiAssistantButton">
+                        <ion-icon name="chatbubbles-outline"></ion-icon>
+                    </button>
                 </div>
             </div>
 
-            <div class="status-bar">
-                <div class="status-card voltage">
-                    <div class="status-info">
-                        <h3>Tegangan</h3>
-                        <div class="status-value" id="voltage">0</div> 
-                        <div class="status-unit">Volt</div>
-                    </div>
-                </div>
-                <div class="status-card current">
-                    <div class="status-info">
-                        <h3>Arus Listrik</h3>
-                        <div class="status-value" id="current">0</div> 
-                        <div class="status-unit">Ampere</div>
-                    </div>
-                </div>
-                <div class="status-card power">
-                    <div class="status-info">
-                        <h3>Daya</h3>
-                        <div class="status-value" id="power">0</div> 
-                        <div class="status-unit">Watt</div>
-                    </div>
-                </div>
-                <div class="status-card rpm">
-                    <div class="status-info">
-                        <h3>Kecepatan Turbin</h3>
-                        <div class="status-value" id="rpm">1500</div>
-                        <div class="status-unit">RPM</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid">
-                <div class="chart-container">
-                    <div class="chart-tabs">
-                        <button class="tab-button active" data-chart-type="realtime">Real-time</button>
-                        <button class="tab-button" data-chart-type="daily">Harian</button>
-                        <button class="tab-button" data-chart-type="weekly">Mingguan</button>
-                    </div>
-                    <h2 id="chartTitle">Real-time Data</h2>
-                    
-                    <div class="chart-wrapper">
-                        <canvas id="realtimeChart"></canvas>
-                    </div>
-
-                    <div class="data-table-wrapper">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Tegangan (V)</th>
-                                    <th>Arus (A)</th>
-                                    <th>Daya (W)</th>
-                                    <th>RPM</th>
-                                </tr>
-                            </thead>
-                            <tbody id="dataTableBody">
-                                <tr>
-                                    <td class="value-voltage">-</td>
-                                    <td class="value-current">-</td>
-                                    <td class="value-power">-</td>
-                                    <td class="value-rpm">-</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="summary-cards">
-                    <div class="summary-card">
-                        <h3>Durasi Penggunaan Hari Ini</h3>
-                        <div class="summary-value" id="duration">0</div> 
-                        <div class="status-unit">Jam</div>
-                    </div>
-                    <div class="summary-card">
-                        <h3>Total Daya Dihasilkan</h3>
-                        <div class="summary-value" id="totalPower">0</div> 
-                        <div class="status-unit">kWh</div>
-                    </div>
-                    <div class="summary-card">
-                        <h3>Efisiensi</h3>
-                        <div class="summary-value" id="efficiency">0</div> 
-                        <div class="status-unit">%</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="fab-container">
-                <button class="ai-fab" id="openAiAssistantButton">
-                    <ion-icon name="chatbubbles-outline"></ion-icon>
-                </button>
-            </div>
+            <footer class="footer">
+                <p>Hydrovoltiger - Platform Monitoring Berbasis IoT</p>
+            </footer>
         </div>
-
-        <footer class="footer">
-            <p>Hydrovoltiger - Platform Monitoring Berbasis IoT</p>
-        </footer>
 
         <div class="ai-overlay" id="aiOverlay">
             <div class="ai-backdrop" id="aiBackdrop"></div>
