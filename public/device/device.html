@@ -4,167 +4,119 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Device - Hydrovoltiger</title>
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="device.css">
-</head>
-<body>
-    <div class="dashboard-container">
-        <!-- Sidebar Navigation -->
-        <nav class="sidebar-nav">
-            <div class="nav-header">
-                <div class="nav-logo">
-                    <ion-icon name="water-outline"></ion-icon>
-                    <span>Hydrovoltiger</span>
-                </div>
-            </div>
 
-            <div class="nav-menu">
-                <a href="../main.html" class="nav-item">
+  <!-- Leaflet Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+
+<body>
+  <div class="dashboard-container">
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar-nav">
+        <div class="nav-header">
+            <div class="nav-logo">
+                <ion-icon name="water-outline"></ion-icon>
+                <span>Hydrovoltiger</span>
+            </div>
+        </div>
+
+        <div class="nav-menu">
+                <a href="../main.html" class="nav-item active">
                     <ion-icon name="home-outline"></ion-icon>
                     <span>Beranda</span>
-                </a>
-                <a href="../profile/profile.html" class="nav-item">
-                    <ion-icon name="person-outline"></ion-icon>
-                    <span>Profil</span>
-                </a>
-                <a href="device.html" class="nav-item active">
-                    <ion-icon name="hardware-chip-outline"></ion-icon>
-                    <span>Device</span>
                 </a>
                 <a href="../news/news.html" class="nav-item">
                     <ion-icon name="newspaper-outline"></ion-icon>
                     <span>News</span>
                 </a>
+                <a href="device.html" class="nav-item">
+                    <ion-icon name="hardware-chip-outline"></ion-icon>
+                    <span>Device</span>
+                </a>
+                <a href="../profile/profile.html" class="nav-item">
+                    <ion-icon name="person-outline"></ion-icon>
+                    <span>Profil</span>
+                </a>
+        </div>
+
+        <div class="nav-footer">
+            <div class="user-info-nav" id="userInfoButton">
+                <div class="user-avatar-nav" id="userAvatarNav">U</div>
+                <div class="user-details-nav">
+                    <span class="user-name-nav" id="userNameNav">User</span>
+                    <span class="user-status">Online</span>
+                </div>
+                <ion-icon name="chevron-down-outline"></ion-icon>
             </div>
 
-            <div class="nav-footer">
-                <div class="user-info-nav" id="userInfoButton">
-                    <div class="user-avatar-nav" id="userAvatarNav">U</div>
-                    <div class="user-details-nav">
-                        <span class="user-name-nav" id="userNameNav">User</span>
-                        <span class="user-status">Online</span>
-                    </div>
-                    <ion-icon name="chevron-down-outline" class="dropdown-icon-nav" id="dropdownIconNav"></ion-icon>
+            <div class="profile-dropdown-nav" id="profileDropdownNav">
+                <div class="dropdown-item-nav">
+                    <ion-icon name="settings-outline"></ion-icon>
+                    <span>Pengaturan</span>
                 </div>
 
-                <div class="profile-dropdown-nav" id="profileDropdownNav">
-                    <div class="dropdown-item-nav">
-                        <ion-icon name="settings-outline"></ion-icon>
-                        <span>Pengaturan</span>
-                    </div>
-                    <div class="dropdown-divider-nav"></div>
-                    <div class="dropdown-item-nav logout">
-                        <ion-icon name="log-out-outline"></ion-icon>
-                        <span>Keluar</span>
-                    </div>
+                <div class="dropdown-divider-nav"></div>
+
+                <div class="dropdown-item-nav logout" id="logoutButton">
+                    <ion-icon name="log-out-outline"></ion-icon>
+                    <span>Keluar</span>
                 </div>
             </div>
-        </nav>
+        </div>
+    </nav>
 
-        <!-- Mobile Bottom Navigation -->
+    <!-- MOBILE NAV -->
         <nav class="mobile-nav">
-            <a href="../main.html" class="mobile-nav-item">
+            <a href="../main.html" class="mobile-nav-item active">
                 <ion-icon name="home-outline"></ion-icon>
                 <span>Beranda</span>
-            </a>
-            <a href="../profile/profile.html" class="mobile-nav-item">
-                <ion-icon name="person-outline"></ion-icon>
-                <span>Profil</span>
-            </a>
-            <a href="device.html" class="mobile-nav-item active">
-                <ion-icon name="hardware-chip-outline"></ion-icon>
-                <span>Device</span>
             </a>
             <a href="../news/news.html" class="mobile-nav-item">
                 <ion-icon name="newspaper-outline"></ion-icon>
                 <span>News</span>
             </a>
+            <a href="device.html" class="mobile-nav-item">
+                <ion-icon name="hardware-chip-outline"></ion-icon>
+                <span>Device</span>
+            </a>
+            <a href="../profile/profile.html" class="mobile-nav-item">
+                <ion-icon name="person-outline"></ion-icon>
+                <span>Profil</span>
+            </a>
         </nav>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <div class="container">
-                <div class="page-header">
-                    <h1>Device Management</h1>
-                    <p>Kelola perangkat monitoring Anda</p>
-                </div>
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <div class="container">
 
-                <div class="device-grid">
-                    <div class="device-card">
-                        <div class="device-icon">
-                            <ion-icon name="hardware-chip"></ion-icon>
-                        </div>
-                        <h3>PLTMH Sensor 01</h3>
-                        <div class="device-status online">
-                            <span class="status-dot"></span>
-                            <span>Online</span>
-                        </div>
-                        <div class="device-info">
-                            <div class="info-item">
-                                <span>ID Device:</span>
-                                <strong>PLTMH-001</strong>
-                            </div>
-                            <div class="info-item">
-                                <span>Lokasi:</span>
-                                <strong>Semarang</strong>
-                            </div>
-                            <div class="info-item">
-                                <span>Last Update:</span>
-                                <strong id="lastUpdate">Just now</strong>
-                            </div>
-                        </div>
-                        <button class="btn-detail">Lihat Detail</button>
-                    </div>
-
-                    <div class="device-card add-device">
-                        <div class="add-icon">
-                            <ion-icon name="add-circle-outline"></ion-icon>
-                        </div>
-                        <h3>Tambah Device Baru</h3>
-                        <p>Hubungkan perangkat monitoring baru</p>
-                        <button class="btn-add">Tambah Device</button>
-                    </div>
-                </div>
-
-                <div class="device-details-section">
-                    <h2>Sensor Information</h2>
-                    <div class="sensor-grid">
-                        <div class="sensor-card">
-                            <ion-icon name="flash-outline"></ion-icon>
-                            <h4>Voltage Sensor</h4>
-                            <p>Status: <span class="sensor-status active">Active</span></p>
-                            <p>Type: ACS712</p>
-                        </div>
-                        <div class="sensor-card">
-                            <ion-icon name="analytics-outline"></ion-icon>
-                            <h4>Current Sensor</h4>
-                            <p>Status: <span class="sensor-status active">Active</span></p>
-                            <p>Type: ZMPT101B</p>
-                        </div>
-                        <div class="sensor-card">
-                            <ion-icon name="speedometer-outline"></ion-icon>
-                            <h4>RPM Sensor</h4>
-                            <p>Status: <span class="sensor-status active">Active</span></p>
-                            <p>Type: Hall Effect</p>
-                        </div>
-                        <div class="sensor-card">
-                            <ion-icon name="wifi-outline"></ion-icon>
-                            <h4>Communication</h4>
-                            <p>Status: <span class="sensor-status active">Connected</span></p>
-                            <p>Type: Firebase RTD</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <footer class="footer">
-                <p>Hydrovoltiger - Platform Monitoring Berbasis IoT</p>
-            </footer>
+        <div class="page-header">
+          <h1>Device Monitoring</h1>
+          <p>Kelola dan pantau perangkat Anda secara realtime</p>
         </div>
+
+        <!-- MAP SECTION -->
+        <h2 class="section-title">Peta Lokasi Device</h2>
+        <div id="deviceMap"></div>
+
+        <!-- DEVICE LIST -->
+        <h2 class="section-title">Daftar Device</h2>
+        <div class="device-grid" id="deviceList">
+          <!-- device di-load otomatis lewat Firebase -->
+        </div>
+
+      </div>
     </div>
-    
-    <script type="module" src="device.js"></script>
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  </div>
+
+  <!-- SCRIPT -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script type="module" src="device.js"></script>
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
 </body>
 </html>

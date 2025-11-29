@@ -3,28 +3,179 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profil Pengguna</title>
+  <title>Profil - Hydrovoltiger</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="profile.css">
 </head>
 <body>
-  <div class="profile-container">
-    <div class="header">
-      <h1>👤 Profil Pengguna</h1>
-    </div>
-
-    <div class="profile-card">
-      <div class="avatar-large" id="avatarLarge"></div>
-      <h2 id="userName"></h2>
-      <p class="email" id="userEmail"></p>
-
-      <div class="profile-actions">
-        <button class="btn-primary" id="backDashboardBtn">⬅ Kembali ke Dashboard</button>
-        <button class="btn-danger" id="deleteAccountBtn">Hapus Akun</button>
+  <div class="dashboard-container">
+    
+    <!-- SIDEBAR -->
+    <nav class="sidebar-nav">
+      <div class="nav-header">
+        <div class="nav-logo">
+          <ion-icon name="water-outline"></ion-icon>
+          <span>Hydrovoltiger</span>
+        </div>
       </div>
+
+      <div class="nav-menu">
+                <a href="../main.html" class="nav-item active">
+                    <ion-icon name="home-outline"></ion-icon>
+                    <span>Beranda</span>
+                </a>
+                <a href="../news/news.html" class="nav-item">
+                    <ion-icon name="newspaper-outline"></ion-icon>
+                    <span>News</span>
+                </a>
+                <a href="../device/device.html" class="nav-item">
+                    <ion-icon name="hardware-chip-outline"></ion-icon>
+                    <span>Device</span>
+                </a>
+                <a href="profile.html" class="nav-item">
+                    <ion-icon name="person-outline"></ion-icon>
+                    <span>Profil</span>
+                </a>
+      </div>
+
+      <div class="nav-footer">
+        <div class="user-info-nav" id="userInfoButton">
+          <div class="user-avatar-nav" id="userAvatarNav">U</div>
+          <div class="user-details-nav">
+            <span class="user-name-nav" id="userNameNav">User</span>
+            <span class="user-status">Online</span>
+          </div>
+          <ion-icon name="chevron-down-outline" class="dropdown-icon-nav"></ion-icon>
+        </div>
+
+        <div class="profile-dropdown-nav" id="profileDropdownNav">
+          <div class="dropdown-item-nav">
+            <ion-icon name="settings-outline"></ion-icon>
+            <span>Pengaturan</span>
+          </div>
+          <div class="dropdown-divider-nav"></div>
+          <div class="dropdown-item-nav logout" id="logoutButton">
+            <ion-icon name="log-out-outline"></ion-icon>
+            <span>Keluar</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- MOBILE NAV -->
+        <nav class="mobile-nav">
+            <a href="../main.html" class="mobile-nav-item active">
+                <ion-icon name="home-outline"></ion-icon>
+                <span>Beranda</span>
+            </a>
+            <a href="../news/news.html" class="mobile-nav-item">
+                <ion-icon name="newspaper-outline"></ion-icon>
+                <span>News</span>
+            </a>
+            <a href="../device/device.html" class="mobile-nav-item">
+                <ion-icon name="hardware-chip-outline"></ion-icon>
+                <span>Device</span>
+            </a>
+            <a href="profile.html" class="mobile-nav-item">
+                <ion-icon name="person-outline"></ion-icon>
+                <span>Profil</span>
+            </a>
+        </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <div class="container">
+        
+        <div class="page-header">
+          <h1>Profil Pengguna</h1>
+          <p>Kelola informasi akun dan preferensi Anda</p>
+        </div>
+
+        <div class="profile-grid">
+          <!-- Profile Card -->
+          <div class="profile-card">
+            <div class="profile-card-header">
+              <div class="avatar-large" id="avatarLarge">U</div>
+              <div class="profile-info">
+                <h2 id="userName">Loading...</h2>
+                <p class="email" id="userEmail">Loading...</p>
+              </div>
+            </div>
+
+            <div class="profile-stats">
+              <div class="stat-item">
+                <ion-icon name="calendar-outline"></ion-icon>
+                <div class="stat-content">
+                  <span class="stat-label">Bergabung Sejak</span>
+                  <span class="stat-value" id="joinDate">-</span>
+                </div>
+              </div>
+              <div class="stat-item">
+                <ion-icon name="shield-checkmark-outline"></ion-icon>
+                <div class="stat-content">
+                  <span class="stat-label">Status Akun</span>
+                  <span class="stat-value">Terverifikasi</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions Card -->
+          <div class="actions-card">
+            <h3>Pengaturan Akun</h3>
+            
+            <div class="action-item">
+              <div class="action-icon">
+                <ion-icon name="notifications-outline"></ion-icon>
+              </div>
+              <div class="action-content">
+                <h4>Notifikasi</h4>
+                <p>Kelola preferensi notifikasi Anda</p>
+              </div>
+              <div class="action-toggle">
+                <label class="switch">
+                  <input type="checkbox" id="notificationToggle" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="action-item">
+              <div class="action-icon">
+                <ion-icon name="key-outline"></ion-icon>
+              </div>
+              <div class="action-content">
+                <h4>Keamanan</h4>
+                <p>Ubah password dan pengaturan keamanan</p>
+              </div>
+              <button class="action-btn" id="securityBtn">
+                <ion-icon name="chevron-forward-outline"></ion-icon>
+              </button>
+            </div>
+
+            <div class="action-divider"></div>
+
+            <div class="danger-zone">
+              <h3>Zona Berbahaya</h3>
+              <p>Tindakan ini tidak dapat dibatalkan</p>
+              <button class="btn-danger" id="deleteAccountBtn">
+                <ion-icon name="trash-outline"></ion-icon>
+                <span>Hapus Akun Permanen</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <footer class="footer">
+        <p>Hydrovoltiger - Platform Monitoring Berbasis IoT</p>
+      </footer>
     </div>
   </div>
 
   <script type="module" src="profile.js"></script>
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </body>
 </html>

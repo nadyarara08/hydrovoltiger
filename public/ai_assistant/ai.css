@@ -92,6 +92,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   padding: 20px;
+  padding-bottom: 100px !important;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -199,6 +200,9 @@
   -webkit-backdrop-filter: blur(10px);
   padding: 16px 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.15);
+  position: sticky;
+  bottom: 0;
+  z-index: 2001;
 }
 
 .chat-input-wrapper {
@@ -301,5 +305,12 @@
 
   .message-bubble {
     max-width: 85%;
+  }
+  .chat-messages {
+      padding-bottom: 140px !important; /* naikkan lagi */
+  }
+
+  .chat-footer {
+    padding-bottom: 20px; /* extra untuk aman */
   }
 }

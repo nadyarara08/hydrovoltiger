@@ -1,6 +1,22 @@
 {
   "rules": {
-    ".read": false,
-    ".write": false
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    },
+    "PLTMH": {
+      ".read": "auth != null",  
+      ".write": "auth != null"
+    },
+    "Devices": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "News": {
+      ".read": true,
+      ".write": "auth != null"
+    }
   }
 }

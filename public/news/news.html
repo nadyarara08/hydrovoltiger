@@ -4,192 +4,113 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>News - Hydrovoltiger</title>
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="news.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
-    <div class="dashboard-container">
-        <!-- Sidebar Navigation -->
-        <nav class="sidebar-nav">
-            <div class="nav-header">
-                <div class="nav-logo">
-                    <ion-icon name="water-outline"></ion-icon>
-                    <span>Hydrovoltiger</span>
-                </div>
-            </div>
 
-            <div class="nav-menu">
-                <a href="../main.html" class="nav-item">
+<body>
+  <div class="dashboard-container">
+
+    <!-- SIDEBAR NAV -->
+    <nav class="sidebar-nav">
+      <div class="nav-header">
+        <div class="nav-logo">
+          <ion-icon name="water-outline"></ion-icon>
+          <span>Hydrovoltiger</span>
+        </div>
+      </div>
+
+      <div class="nav-menu">
+                <a href="../main.html" class="nav-item active">
                     <ion-icon name="home-outline"></ion-icon>
                     <span>Beranda</span>
                 </a>
-                <a href="../profile/profile.html" class="nav-item">
-                    <ion-icon name="person-outline"></ion-icon>
-                    <span>Profil</span>
+                <a href="news.html" class="nav-item">
+                    <ion-icon name="newspaper-outline"></ion-icon>
+                    <span>News</span>
                 </a>
                 <a href="../device/device.html" class="nav-item">
                     <ion-icon name="hardware-chip-outline"></ion-icon>
                     <span>Device</span>
                 </a>
-                <a href="news.html" class="nav-item active">
-                    <ion-icon name="newspaper-outline"></ion-icon>
-                    <span>News</span>
+                <a href="../profile/profile.html" class="nav-item">
+                    <ion-icon name="person-outline"></ion-icon>
+                    <span>Profil</span>
                 </a>
-            </div>
+      </div>
 
-            <div class="nav-footer">
-                <div class="user-info-nav" id="userInfoButton">
-                    <div class="user-avatar-nav" id="userAvatarNav">U</div>
-                    <div class="user-details-nav">
-                        <span class="user-name-nav" id="userNameNav">User</span>
-                        <span class="user-status">Online</span>
-                    </div>
-                    <ion-icon name="chevron-down-outline" class="dropdown-icon-nav" id="dropdownIconNav"></ion-icon>
-                </div>
+      <!-- FOOTER USER -->
+      <div class="nav-footer">
+        <div class="user-info-nav" id="userInfoButton">
+          <div class="user-avatar-nav" id="userAvatarNav">U</div>
 
-                <div class="profile-dropdown-nav" id="profileDropdownNav">
-                    <div class="dropdown-item-nav">
-                        <ion-icon name="settings-outline"></ion-icon>
-                        <span>Pengaturan</span>
-                    </div>
-                    <div class="dropdown-divider-nav"></div>
-                    <div class="dropdown-item-nav logout">
-                        <ion-icon name="log-out-outline"></ion-icon>
-                        <span>Keluar</span>
-                    </div>
-                </div>
-            </div>
-        </nav>
+          <div class="user-details-nav">
+            <span class="user-name-nav" id="userNameNav">User</span>
+            <span class="user-status">Online</span>
+          </div>
 
-        <!-- Mobile Bottom Navigation -->
+          <ion-icon name="chevron-down-outline" class="dropdown-icon-nav"></ion-icon>
+        </div>
+
+        <div class="profile-dropdown-nav" id="profileDropdownNav">
+          <div class="dropdown-item-nav">
+            <ion-icon name="settings-outline"></ion-icon>
+            <span>Pengaturan</span>
+          </div>
+
+          <div class="dropdown-divider-nav"></div>
+
+          <div class="dropdown-item-nav logout" id="logoutButton">
+            <ion-icon name="log-out-outline"></ion-icon>
+            <span>Keluar</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- MOBILE NAV -->
         <nav class="mobile-nav">
-            <a href="../main.html" class="mobile-nav-item">
+            <a href="../main.html" class="mobile-nav-item active">
                 <ion-icon name="home-outline"></ion-icon>
                 <span>Beranda</span>
             </a>
-            <a href="../profile/profile.html" class="mobile-nav-item">
-                <ion-icon name="person-outline"></ion-icon>
-                <span>Profil</span>
+            <a href="news.html" class="mobile-nav-item">
+                <ion-icon name="newspaper-outline"></ion-icon>
+                <span>News</span>
             </a>
             <a href="../device/device.html" class="mobile-nav-item">
                 <ion-icon name="hardware-chip-outline"></ion-icon>
                 <span>Device</span>
             </a>
-            <a href="news.html" class="mobile-nav-item active">
-                <ion-icon name="newspaper-outline"></ion-icon>
-                <span>News</span>
+            <a href="../profile/profile.html" class="mobile-nav-item">
+                <ion-icon name="person-outline"></ion-icon>
+                <span>Profil</span>
             </a>
         </nav>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <div class="container">
-                <div class="page-header">
-                    <h1>Berita & Artikel</h1>
-                    <p>Update terbaru seputar energi terbarukan dan teknologi IoT</p>
-                </div>
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <div class="container">
 
-                <div class="news-grid">
-                    <article class="news-card featured">
-                        <div class="news-image">
-                            <img src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800" alt="Hydropower">
-                            <span class="news-badge">Featured</span>
-                        </div>
-                        <div class="news-content">
-                            <div class="news-meta">
-                                <span class="news-category">Energi Terbarukan</span>
-                                <span class="news-date">28 Nov 2024</span>
-                            </div>
-                            <h3>Potensi PLTMH di Indonesia Mencapai 75 GW</h3>
-                            <p>Indonesia memiliki potensi pembangkit listrik tenaga mikrohidro yang sangat besar. Teknologi monitoring berbasis IoT dapat memaksimalkan efisiensi operasional.</p>
-                            <a href="#" class="read-more">Baca Selengkapnya →</a>
-                        </div>
-                    </article>
-
-                    <article class="news-card">
-                        <div class="news-image">
-                            <img src="https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?w=800" alt="IoT Technology">
-                        </div>
-                        <div class="news-content">
-                            <div class="news-meta">
-                                <span class="news-category">Teknologi IoT</span>
-                                <span class="news-date">25 Nov 2024</span>
-                            </div>
-                            <h3>Peran IoT dalam Monitoring Energi Real-time</h3>
-                            <p>Sistem monitoring berbasis Internet of Things memungkinkan pengawasan pembangkit listrik secara real-time dari jarak jauh.</p>
-                            <a href="#" class="read-more">Baca Selengkapnya →</a>
-                        </div>
-                    </article>
-
-                    <article class="news-card">
-                        <div class="news-image">
-                            <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800" alt="Sustainable Energy">
-                        </div>
-                        <div class="news-content">
-                            <div class="news-meta">
-                                <span class="news-category">Keberlanjutan</span>
-                                <span class="news-date">22 Nov 2024</span>
-                            </div>
-                            <h3>Transisi Energi Bersih untuk Masa Depan</h3>
-                            <p>Pemerintah mendorong penggunaan energi terbarukan untuk mencapai target net-zero emission pada tahun 2060.</p>
-                            <a href="#" class="read-more">Baca Selengkapnya →</a>
-                        </div>
-                    </article>
-
-                    <article class="news-card">
-                        <div class="news-image">
-                            <img src="https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=800" alt="Water Energy">
-                        </div>
-                        <div class="news-content">
-                            <div class="news-meta">
-                                <span class="news-category">Inovasi</span>
-                                <span class="news-date">20 Nov 2024</span>
-                            </div>
-                            <h3>Teknologi Turbin Mikrohidro Terbaru</h3>
-                            <p>Inovasi terbaru dalam desain turbin meningkatkan efisiensi konversi energi hingga 95%.</p>
-                            <a href="#" class="read-more">Baca Selengkapnya →</a>
-                        </div>
-                    </article>
-
-                    <article class="news-card">
-                        <div class="news-image">
-                            <img src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?w=800" alt="Digital Technology">
-                        </div>
-                        <div class="news-content">
-                            <div class="news-meta">
-                                <span class="news-category">Digital</span>
-                                <span class="news-date">18 Nov 2024</span>
-                            </div>
-                            <h3>AI dan Machine Learning untuk Prediksi Energi</h3>
-                            <p>Pemanfaatan kecerdasan buatan membantu memprediksi produksi energi dan mengoptimalkan performa sistem.</p>
-                            <a href="#" class="read-more">Baca Selengkapnya →</a>
-                        </div>
-                    </article>
-
-                    <article class="news-card">
-                        <div class="news-image">
-                            <img src="https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?w=800" alt="Community">
-                        </div>
-                        <div class="news-content">
-                            <div class="news-meta">
-                                <span class="news-category">Komunitas</span>
-                                <span class="news-date">15 Nov 2024</span>
-                            </div>
-                            <h3>PLTMH Memberdayakan Desa Terpencil</h3>
-                            <p>Program elektrifikasi berbasis mikrohidro telah menerangi ratusan desa di seluruh Indonesia.</p>
-                            <a href="#" class="read-more">Baca Selengkapnya →</a>
-                        </div>
-                    </article>
-                </div>
-            </div>
-
-            <footer class="footer">
-                <p>Hydrovoltiger - Platform Monitoring Berbasis IoT</p>
-            </footer>
+        <div class="page-header">
+          <h1>Berita & Artikel</h1>
+          <p>Update terbaru seputar energi terbarukan, monitoring IoT, dan teknologi Hydrovoltiger</p>
         </div>
+
+        <!-- DINAMIS DARI FIREBASE -->
+        <div class="news-grid" id="newsList">
+          <!-- konten di-generate otomatis oleh news.js -->
+        </div>
+
+      </div>
     </div>
-    <script type="module" src="news.js"></script>
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script type="module" src="news.js"></script>
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </body>
 </html>
