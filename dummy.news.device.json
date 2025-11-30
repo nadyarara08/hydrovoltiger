@@ -17,7 +17,7 @@
       "name": "Hydrovoltiger Unit Beta",
       "status": "online",
       "location": "Sungai Bengawan Solo, Jawa Tengah",
-      "lat": -7.5560,
+      "lat": -7.556,
       "lng": 110.8316,
       "lastUpdate": "2024-11-28 14:28:10",
       "voltage": 215,
@@ -109,72 +109,79 @@
     "news-001": {
       "title": "Hydrovoltiger Raih Penghargaan Inovasi Energi Terbarukan 2024",
       "category": "Penghargaan",
-      "date": "28 November 2024",
+      "date": "2024-11-28",
       "content": "Hydrovoltiger berhasil meraih penghargaan bergengsi sebagai Inovasi Energi Terbarukan Terbaik 2024 dari Kementerian ESDM. Penghargaan ini diberikan atas kontribusi signifikan dalam pengembangan teknologi pembangkit listrik tenaga air skala mikro yang ramah lingkungan.",
       "image": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800&h=500&fit=crop"
     },
     "news-002": {
       "title": "Ekspansi Pemasangan Unit Hydrovoltiger di 15 Provinsi Indonesia",
       "category": "Ekspansi",
-      "date": "25 November 2024",
+      "date": "2024-11-25",
       "content": "Program ekspansi Hydrovoltiger menargetkan pemasangan 150 unit baru di 15 provinsi Indonesia pada tahun 2025. Fokus utama adalah daerah pedesaan yang belum terjangkau listrik PLN, dengan potensi menerangi 50.000 rumah tangga.",
       "image": "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?w=800&h=500&fit=crop"
     },
     "news-003": {
       "title": "Teknologi IoT Monitoring Real-time Tingkatkan Efisiensi 40%",
       "category": "Teknologi",
-      "date": "22 November 2024",
+      "date": "2024-11-22",
       "content": "Implementasi sistem monitoring berbasis IoT pada Hydrovoltiger berhasil meningkatkan efisiensi operasional hingga 40%. Sistem ini memungkinkan pemantauan kondisi turbin secara real-time dan prediksi maintenance preventif yang lebih akurat.",
       "image": "https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?w=800&h=500&fit=crop"
     },
     "news-004": {
       "title": "Kemitraan Strategis dengan Universitas untuk Riset Energi Hijau",
       "category": "Kemitraan",
-      "date": "20 November 2024",
+      "date": "2024-11-20",
       "content": "Hydrovoltiger menjalin kemitraan dengan 5 universitas terkemuka di Indonesia untuk riset dan pengembangan teknologi energi terbarukan. Program ini mencakup beasiswa riset, laboratorium bersama, dan inkubasi startup energi hijau.",
       "image": "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&h=500&fit=crop"
     },
     "news-005": {
       "title": "Hydrovoltiger Hemat Emisi CO2 Setara 10.000 Pohon per Tahun",
       "category": "Lingkungan",
-      "date": "18 November 2024",
+      "date": "2024-11-18",
       "content": "Berdasarkan studi dampak lingkungan terbaru, penggunaan Hydrovoltiger di Indonesia berhasil mengurangi emisi CO2 setara dengan penanaman 10.000 pohon per tahun. Ini menjadi bukti nyata kontribusi teknologi dalam mitigasi perubahan iklim.",
       "image": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&h=500&fit=crop"
     },
     "news-006": {
       "title": "Webinar Series: Masa Depan Energi Terbarukan di Indonesia",
       "category": "Event",
-      "date": "15 November 2024",
+      "date": "2024-11-15",
       "content": "Hydrovoltiger mengadakan webinar series bertema 'Masa Depan Energi Terbarukan di Indonesia' dengan menghadirkan expert dari dalam dan luar negeri. Event ini dihadiri oleh 2.000+ peserta dari berbagai kalangan industri energi.",
       "image": "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=500&fit=crop"
     },
     "news-007": {
       "title": "Pembaruan Aplikasi Mobile Hydrovoltiger dengan Fitur AI Assistant",
       "category": "Update",
-      "date": "12 November 2024",
+      "date": "2024-11-12",
       "content": "Aplikasi mobile Hydrovoltiger kini dilengkapi dengan AI Assistant yang dapat membantu pengguna menganalisis data, memberikan rekomendasi optimasi, dan menjawab pertanyaan teknis secara real-time. Fitur ini memanfaatkan teknologi machine learning terkini.",
       "image": "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&h=500&fit=crop"
     },
     "news-008": {
       "title": "Program CSR: Listrik Gratis untuk 1.000 Sekolah di Pedalaman",
       "category": "CSR",
-      "date": "8 November 2024",
+      "date": "2024-11-08",
       "content": "Sebagai bentuk tanggung jawab sosial, Hydrovoltiger meluncurkan program 'Terang untuk Pendidikan' yang menyediakan instalasi gratis untuk 1.000 sekolah di daerah pedalaman yang belum memiliki akses listrik. Program ini akan berlangsung hingga 2026.",
       "image": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=800&h=500&fit=crop"
     },
     "news-009": {
       "title": "Sertifikasi Internasional ISO 14001 untuk Manajemen Lingkungan",
       "category": "Sertifikasi",
-      "date": "5 November 2024",
+      "date": "2024-11-05",
       "content": "Hydrovoltiger resmi mendapatkan sertifikasi ISO 14001:2015 untuk sistem manajemen lingkungan. Sertifikasi ini membuktikan komitmen perusahaan dalam menjalankan operasional yang berkelanjutan dan peduli lingkungan.",
       "image": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&h=500&fit=crop"
     },
     "news-010": {
       "title": "Pelatihan Teknisi Lokal untuk Maintenance Unit Hydrovoltiger",
       "category": "Pelatihan",
-      "date": "1 November 2024",
+      "date": "2024-11-01",
       "content": "Program pelatihan teknisi lokal telah meluluskan 200 teknisi bersertifikat di seluruh Indonesia. Mereka akan menjadi ujung tombak dalam pemeliharaan dan perbaikan unit Hydrovoltiger di daerah masing-masing, menciptakan lapangan kerja baru.",
       "image": "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=500&fit=crop"
     }
+  },
+  "PLTMH": {
+    "Tegangan_V": 12.45,
+    "Arus_mA": 2.87,
+    "Daya_mW": 35.73,
+    "RPM_Turbin": 456.2,
+    "Total_Energi_mWh": 145.68
   }
 }
