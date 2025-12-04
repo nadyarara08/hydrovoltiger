@@ -611,3 +611,21 @@
 html, body {
     overflow-x: hidden !important;
 }
+/* === FIX: Padding kiri terlalu mepet di mobile === */
+@media (max-width: 768px) {
+    body .dashboard-container .main-content {
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+    }
+
+    body .dashboard-container .main-content .container {
+        padding-left: 0 !important;  /* biarkan main-content yang handle padding */
+        padding-right: 0 !important;
+    }
+
+    /* Card biar tidak nempel ke kiri */
+    .analytics-card {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+}
