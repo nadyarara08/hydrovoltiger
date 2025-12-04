@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hydrovoltiger</title>
   <link rel="stylesheet" href="main.css">
+  <!-- ✅ TAMBAHKAN AI.CSS DI SINI -->
+  <link rel="stylesheet" href="./ai_assistant/ai.css">
   
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -21,19 +23,23 @@
             </div>
 
             <div class="nav-menu">
-                <a href="main.html" class="nav-item active">
+                <a href="main.html" class="mobile-nav-item active">
                     <ion-icon name="home-outline"></ion-icon>
                     <span>Beranda</span>
                 </a>
-                <a href="./news/news.html" class="nav-item">
+                <a href="./analytics/analytics.html" class="mobile-nav-item">
+                    <ion-icon name="analytics-outline"></ion-icon>
+                    <span>Analitik</span>
+                </a>
+                <a href="./news/news.html" class="mobile-nav-item">
                     <ion-icon name="newspaper-outline"></ion-icon>
                     <span>News</span>
                 </a>
-                <a href="./device/device.html" class="nav-item">
+                <a href="./device/device.html" class="mobile-nav-item">
                     <ion-icon name="hardware-chip-outline"></ion-icon>
                     <span>Device</span>
                 </a>
-                <a href="./profile/profile.html" class="nav-item">
+                <a href="./profile/profile.html" class="mobile-nav-item">
                     <ion-icon name="person-outline"></ion-icon>
                     <span>Profil</span>
                 </a>
@@ -68,6 +74,10 @@
             <a href="main.html" class="mobile-nav-item active">
                 <ion-icon name="home-outline"></ion-icon>
                 <span>Beranda</span>
+            </a>
+            <a href="./analytics/analytics.html" class="mobile-nav-item">
+                <ion-icon name="analytics-outline"></ion-icon>
+                <span>Analitik</span>
             </a>
             <a href="./news/news.html" class="mobile-nav-item">
                 <ion-icon name="newspaper-outline"></ion-icon>
@@ -198,13 +208,14 @@
             </footer>
         </div>
 
+        <!-- AI Assistant Overlay - Sekarang diatur oleh ai.css -->
         <div class="ai-overlay" id="aiOverlay">
             <div class="ai-backdrop" id="aiBackdrop"></div>
 
             <div class="ai-sidebar">
                 <div class="sidebar-header">
                     <div class="sidebar-title">
-                        <ion-icon name="chatbubbles" class="header-icon"></ion-icon>
+                        <ion-icon name="chatbubbles" class="icon"></ion-icon>
                         <h2>AI Assistant</h2>
                     </div>
                     <button class="close-btn" id="closeAiAssistantButton">
@@ -212,6 +223,7 @@
                     </button>
                 </div>
 
+                <!-- Chat Messages -->
                 <div class="chat-messages" id="chatMessages">
                     <div class="message-row ai">
                         <div class="message-avatar">🤖</div>
@@ -219,6 +231,7 @@
                     </div>
                 </div>
 
+                <!-- Chat Footer -->
                 <div class="chat-footer">
                     <div class="chat-input-wrapper">
                         <input type="text" id="chatInput" placeholder="Tanyakan tentang Hydrovoltiger..." class="chat-input">

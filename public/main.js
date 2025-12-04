@@ -6,6 +6,8 @@ import { initAiAssistant } from "./ai_assistant/ai.js";
 
 // === Saat halaman siap ===
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("🚀 Page loaded, initializing...");
+  
   const userAvatarNav = document.getElementById("userAvatarNav");
   const userNameNav = document.getElementById("userNameNav");
 
@@ -17,6 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const connectionRef = ref(db, ".info/connected");
   onValue(connectionRef, (snapshot) => {
     const connected = snapshot.val();
+    console.log("🔌 Firebase Connection Status:", connected ? "ONLINE" : "OFFLINE");
+    
     if (connected) {
       indicator.classList.add("online");
       indicator.classList.remove("offline");
@@ -31,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // === LOGIN CHECK ===
   onAuthStateChanged(auth, (user) => {
     if (user) {
+      console.log("✅ User logged in:", user.email);
       const name = user.displayName || user.email.split("@")[0];
       const initial = name.charAt(0).toUpperCase();
       
@@ -40,12 +45,15 @@ document.addEventListener("DOMContentLoaded", () => {
       startDashboard(); // Mulai logika dasbor
       initAiAssistant(initial); // Mulai logika AI Assistant
     } else {
+      console.log("❌ No user logged in, redirecting to login...");
       window.location.href = "./login/login.html";
     }
   });
 
   // === LOGIKA DASHBOARD ===
   function startDashboard() {
+    console.log("📊 Starting Dashboard...");
+    
     let realtimeData = { labels: [], voltage: [], current: [], power: [], rpm: [] };
     let dailyData = { labels: [], voltage: [], current: [], power: [], rpm: [], timestamps: [] };
     let weeklyData = { labels: [], voltage: [], current: [], power: [], rpm: [], timestamps: [] };
@@ -381,12 +389,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Fungsi untuk memuat data histori saat pertama kali aplikasi dimuat
     function loadHistoryData() {
+      console.log("📚 Loading history data...");
+      
       onValue(historyRef, (snapshot) => {
-        if (!snapshot.exists()) return;
+        if (!snapshot.exists()) {
+          console.log("📚 No history data found");
+          return;
+        }
 
         const history = snapshot.val();
         const now = new Date();
         const oneDayAgo = now.getTime() - (24 * 60 * 60 * 1000);
+
+        console.log("📚 History data loaded:", Object.keys(history).length, "entries");
 
         // Reset data
         dailyData = { labels: [], voltage: [], current: [], power: [], rpm: [], timestamps: [] };
@@ -425,11 +440,15 @@ document.addEventListener("DOMContentLoaded", () => {
           lastProcessedDay = Math.max(...dailyData.timestamps);
         }
 
+        console.log("📚 Daily data processed:", dailyData.labels.length, "entries");
+
         // Update chart jika tab daily aktif
         const activeTab = document.querySelector(".tab-button.active");
         if (activeTab && activeTab.dataset.chartType === "daily") {
           setChartData(dailyData);
         }
+      }, (error) => {
+        console.error("❌ Error loading history:", error);
       });
     }
 
@@ -448,19 +467,33 @@ document.addEventListener("DOMContentLoaded", () => {
         power: parseFloat(data.power || 0).toFixed(2),
         rpm: parseFloat(data.rpm || 0).toFixed(2),
         timestamp: timestamp
+      }).then(() => {
+        // console.log("✅ History saved successfully");
+      }).catch((error) => {
+        console.error("❌ Error saving history:", error);
       });
     }
 
     // Listen untuk perubahan data realtime
+    console.log("👂 Setting up PLTMH listener...");
+    
     onValue(pltmhRef, (snapshot) => {
-      if (!snapshot.exists()) return;
+      if (!snapshot.exists()) {
+        console.warn("⚠️ PLTMH data does not exist in Firebase!");
+        console.log("💡 Please add data manually in Firebase Console");
+        return;
+      }
+      
       const data = snapshot.val();
+      console.log("📊 PLTMH data received:", data);
 
       const voltage = parseFloat(data.Tegangan_V || 0);
       const current = parseFloat(data.Arus_mA || 0);
       const power = parseFloat(data.Daya_mW || 0);
       const rpm = parseFloat(data.RPM_Turbin || 0);
       const totalEnergy = parseFloat(data.Total_Energi_mWh || 0);
+
+      console.log("✅ Parsed values:", { voltage, current, power, rpm, totalEnergy });
 
       // Simpan data ke histori
       saveToHistory({
@@ -471,11 +504,17 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       // Update card di dashboard
-      document.getElementById("voltage").textContent = voltage.toFixed(2);
-      document.getElementById("current").textContent = current.toFixed(2);
-      document.getElementById("power").textContent = power.toFixed(2);
-      document.getElementById("rpm").textContent = rpm.toFixed(2);
-      document.getElementById("totalPower").textContent = totalEnergy.toFixed(4);
+      const voltageEl = document.getElementById("voltage");
+      const currentEl = document.getElementById("current");
+      const powerEl = document.getElementById("power");
+      const rpmEl = document.getElementById("rpm");
+      const totalPowerEl = document.getElementById("totalPower");
+
+      if (voltageEl) voltageEl.textContent = voltage.toFixed(2);
+      if (currentEl) currentEl.textContent = current.toFixed(2);
+      if (powerEl) powerEl.textContent = power.toFixed(2);
+      if (rpmEl) rpmEl.textContent = rpm.toFixed(2);
+      if (totalPowerEl) totalPowerEl.textContent = totalEnergy.toFixed(4);
 
       // Duration calculation
       let durationText = "00:00:00";
@@ -491,9 +530,12 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         turbineStartTime = null;
       }
-      document.getElementById("duration").textContent = durationText;
+      
+      const durationEl = document.getElementById("duration");
+      if (durationEl) durationEl.textContent = durationText;
 
-      document.getElementById("efficiency").textContent = (85 + Math.random() * 10).toFixed(0);
+      const efficiencyEl = document.getElementById("efficiency");
+      if (efficiencyEl) efficiencyEl.textContent = (85 + Math.random() * 10).toFixed(0);
 
       // Tambah ke chart data realtime
       const now = new Date();
@@ -522,13 +564,21 @@ document.addEventListener("DOMContentLoaded", () => {
       const activeTab = document.querySelector(".tab-button.active");
       if (activeTab && activeTab.dataset.chartType === "realtime") {
         setChartData(realtimeData);
-        updateDataTable(); // Update table with new data
+        updateDataTable();
+      }
+    }, (error) => {
+      console.error("❌ Firebase PLTMH Error:", error.message);
+      if (error.code === "PERMISSION_DENIED") {
+        console.error("🚫 PERMISSION DENIED! Check Firebase Rules");
+        console.log("💡 Make sure user is authenticated and rules allow read access");
       }
     });
 
     // === Ganti Tab ===
     document.querySelectorAll(".tab-button").forEach((button) => {
       button.addEventListener("click", () => {
+        console.log("🔄 Switching tab to:", button.dataset.chartType);
+        
         document.querySelectorAll(".tab-button").forEach((btn) => btn.classList.remove("active"));
         button.classList.add("active");
 
@@ -538,14 +588,17 @@ document.addEventListener("DOMContentLoaded", () => {
           setChartData(dailyData);
         } else if (button.dataset.chartType === "weekly") {
           setChartData(weeklyData);
-          updateDataTable(); // Update table when switching to weekly
+        } else if (button.dataset.chartType === "monthly") {
+          setChartData(monthlyData);
         }
       });
     });
 
     // Set awal
     setChartData(realtimeData);
-    updateDataTable(); // Initialize table on load
+    updateDataTable();
+    
+    console.log("✅ Dashboard initialized successfully");
   }
 
   // === DROPDOWN PROFILE SIDEBAR ===
@@ -587,6 +640,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (logoutItemNav) {
       logoutItemNav.addEventListener("click", () => {
+        console.log("🚪 Logging out...");
+        
         const toast = document.createElement("div");
         toast.className = "toast-message";
         toast.textContent = "Memproses logout...";
@@ -596,13 +651,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         signOut(auth)
           .then(() => {
+            console.log("✅ Logout successful");
             toast.textContent = "Logout berhasil!";
             setTimeout(() => {
               window.location.href = "./login/login.html";
             }, 700);
           })
           .catch((error) => {
-            console.error("Gagal logout:", error);
+            console.error("❌ Logout error:", error);
             toast.textContent = "Terjadi kesalahan saat logout. Silahkan coba lagi.";
             setTimeout(() => {
               toast.classList.remove("show");

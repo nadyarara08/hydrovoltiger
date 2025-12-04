@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analitik - Hydrovoltiger</title>
+  <link rel="stylesheet" href="../main.css">
+  <link rel="stylesheet" href="analytics.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar-nav">
+            <div class="nav-header">
+                <div class="nav-logo">
+                    <ion-icon name="water-outline"></ion-icon>
+                    <span>Hydrovoltiger</span>
+                </div>
+            </div>
+
+            <div class="nav-menu">
+                <a href="../main.html" class="nav-item">
+                    <ion-icon name="home-outline"></ion-icon>
+                    <span>Beranda</span>
+                </a>
+                <a href="analytics.html" class="nav-item active">
+                    <ion-icon name="analytics-outline"></ion-icon>
+                    <span>Analitik</span>
+                </a>
+                <a href="../news/news.html" class="nav-item">
+                    <ion-icon name="newspaper-outline"></ion-icon>
+                    <span>News</span>
+                </a>
+                <a href="../device/device.html" class="nav-item">
+                    <ion-icon name="hardware-chip-outline"></ion-icon>
+                    <span>Device</span>
+                </a>
+                <a href="../profile/profile.html" class="nav-item">
+                    <ion-icon name="person-outline"></ion-icon>
+                    <span>Profil</span>
+                </a>
+            </div>
+
+            <div class="nav-footer">
+                <div class="user-info-nav" id="userInfoButton">
+                    <div class="user-avatar-nav" id="userAvatarNav">U</div>
+                    <div class="user-details-nav">
+                        <span class="user-name-nav" id="userNameNav">User</span>
+                        <span class="user-status">Online</span>
+                    </div>
+                    <ion-icon name="chevron-down-outline" class="dropdown-icon-nav" id="dropdownIconNav"></ion-icon>
+                </div>
+
+                <div class="profile-dropdown-nav" id="profileDropdownNav">
+                    <div class="dropdown-item-nav">
+                        <ion-icon name="settings-outline"></ion-icon>
+                        <span>Pengaturan</span>
+                    </div>
+                    <div class="dropdown-divider-nav"></div>
+                    <div class="dropdown-item-nav logout">
+                        <ion-icon name="log-out-outline"></ion-icon>
+                        <span>Keluar</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Mobile Bottom Navigation -->
+        <nav class="mobile-nav">
+            <a href="../main.html" class="mobile-nav-item">
+                <ion-icon name="home-outline"></ion-icon>
+                <span>Beranda</span>
+            </a>
+            <a href="analytics.html" class="mobile-nav-item active">
+                <ion-icon name="analytics-outline"></ion-icon>
+                <span>Analitik</span>
+            </a>
+            <a href="../news/news.html" class="mobile-nav-item">
+                <ion-icon name="newspaper-outline"></ion-icon>
+                <span>News</span>
+            </a>
+            <a href="../device/device.html" class="mobile-nav-item">
+                <ion-icon name="hardware-chip-outline"></ion-icon>
+                <span>Device</span>
+            </a>
+            <a href="../profile/profile.html" class="mobile-nav-item">
+                <ion-icon name="person-outline"></ion-icon>
+                <span>Profil</span>
+            </a>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="container">
+                <div class="header">
+                    <div class="header-top">
+                        <div class="header-left">
+                            <div class="header-title-wrapper">
+                                <h1>Analitik & Prediksi Energi</h1>
+                                <p class="header-subtitle">Monitor penggunaan daya dan estimasi biaya Anda</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="quick-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon voltage">
+                            <ion-icon name="flash-outline"></ion-icon>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Daya Saat Ini</span>
+                            <span class="stat-value" id="currentPowerStat">0 W</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon current">
+                            <ion-icon name="pulse-outline"></ion-icon>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Status Efisiensi</span>
+                            <span class="stat-value" id="efficiencyStatus">Memuat...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Analytics Grid -->
+                <div class="analytics-grid">
+                    <!-- Rekomendasi Hemat Energi -->
+                    <div class="analytics-card recommendation-card">
+                        <div class="card-header">
+                            <div class="card-header-left">
+                                <div class="card-icon recommendation">
+                                    <ion-icon name="bulb-outline"></ion-icon>
+                                </div>
+                                <h2>Rekomendasi Hemat Energi</h2>
+                            </div>
+                            <div class="status-badge" id="recommendationBadge">
+                                <ion-icon name="checkmark-circle"></ion-icon>
+                                <span>Sangat Efisien</span>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="recommendation-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">Daya Saat Ini</span>
+                                    <span class="detail-value" id="currentPowerDetail">0 W</span>
+                                </div>
+                                <div class="recommendation-text" id="recommendationText">
+                                    <ion-icon name="information-circle-outline"></ion-icon>
+                                    <p>Sedang menganalisis data Anda...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prediksi Penggunaan Bulanan -->
+                    <div class="analytics-card prediction-card">
+                        <div class="card-header">
+                            <div class="card-header-left">
+                                <div class="card-icon prediction">
+                                    <ion-icon name="trending-up-outline"></ion-icon>
+                                </div>
+                                <h2>Prediksi Penggunaan Bulanan</h2>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="prediction-chart">
+                                <div class="prediction-item">
+                                    <div class="prediction-label">
+                                        <ion-icon name="calendar-outline"></ion-icon>
+                                        <span>Konsumsi Harian</span>
+                                    </div>
+                                    <div class="prediction-value" id="dailyConsumption">0 Wh</div>
+                                </div>
+                                <div class="prediction-item">
+                                    <div class="prediction-label">
+                                        <ion-icon name="time-outline"></ion-icon>
+                                        <span>Konsumsi Bulanan</span>
+                                    </div>
+                                    <div class="prediction-value highlight" id="monthlyConsumption">0 kWh</div>
+                                </div>
+                            </div>
+                            <div class="prediction-note">
+                                <ion-icon name="information-circle-outline"></ion-icon>
+                                <p>Berdasarkan penggunaan 8 jam/hari selama 30 hari</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estimasi Biaya Listrik -->
+                    <div class="analytics-card cost-card">
+                        <div class="card-header">
+                            <div class="card-header-left">
+                                <div class="card-icon cost">
+                                    <ion-icon name="cash-outline"></ion-icon>
+                                </div>
+                                <h2>Estimasi Biaya Listrik</h2>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="cost-breakdown">
+                                <div class="cost-item">
+                                    <span class="cost-label">Tarif per kWh (PLN R1/900VA)</span>
+                                    <span class="cost-value">Rp 1.444,70</span>
+                                </div>
+                                <div class="cost-divider"></div>
+                                <div class="cost-item main-cost">
+                                    <span class="cost-label">Estimasi Biaya Bulanan</span>
+                                    <span class="cost-value large" id="monthlyCost">Rp 0</span>
+                                </div>
+                            </div>
+                            <div class="cost-chart">
+                                <div class="cost-bar">
+                                    <div class="cost-bar-fill" id="costBarFill"></div>
+                                </div>
+                                <div class="cost-comparison">
+                                    <span class="comparison-label">Perbandingan dengan rata-rata rumah tangga 900VA</span>
+                                    <span class="comparison-value" id="costComparison">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tips Hemat Energi -->
+                    <div class="analytics-card tips-card">
+                        <div class="card-header">
+                            <div class="card-header-left">
+                                <div class="card-icon tips">
+                                    <ion-icon name="leaf-outline"></ion-icon>
+                                </div>
+                                <h2>Tips Hemat Energi</h2>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="tips-list">
+                                <div class="tip-item">
+                                    <ion-icon name="checkmark-circle-outline"></ion-icon>
+                                    <p>Matikan perangkat elektronik yang tidak digunakan</p>
+                                </div>
+                                <div class="tip-item">
+                                    <ion-icon name="checkmark-circle-outline"></ion-icon>
+                                    <p>Gunakan lampu LED untuk efisiensi maksimal</p>
+                                </div>
+                                <div class="tip-item">
+                                    <ion-icon name="checkmark-circle-outline"></ion-icon>
+                                    <p>Atur suhu AC pada 24-26°C untuk kenyamanan optimal</p>
+                                </div>
+                                <div class="tip-item">
+                                    <ion-icon name="checkmark-circle-outline"></ion-icon>
+                                    <p>Cabut charger setelah perangkat terisi penuh</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script type="module" src="analytics.js"></script>
+</body>
+</html>
