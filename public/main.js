@@ -8,7 +8,7 @@ import { initAiAssistant } from "./ai_assistant/ai.js";
 const TESTING_MODE = false; // ← UBAH KE false NANTI UNTUK PRODUCTION
 const SAVE_INTERVAL = TESTING_MODE ? 60000 : 3600000; // 1 menit vs 1 jam
 
-console.log(`🧪 Mode: ${TESTING_MODE ? 'TESTING (1 menit)' : 'PRODUCTION (1 jam)'}`);
+console.log(`🧪 Mode: ${TESTING_MODE ? 'TESTING (1 minute)' : 'PRODUCTION (1 hour)'}`);
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("🚀 Page loaded, initializing...");
@@ -28,11 +28,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (connected) {
       indicator.classList.add("online");
       indicator.classList.remove("offline");
-      indicatorText.textContent = "Terhubung";
+      indicatorText.textContent = "Connected";
     } else {
       indicator.classList.add("offline");
       indicator.classList.remove("online");
-      indicatorText.textContent = "Tidak terhubung";
+      indicatorText.textContent = "Disconnected";
     }
   });
 
@@ -187,8 +187,8 @@ document.addEventListener("DOMContentLoaded", () => {
           rpm: avgRpm.toFixed(2),
           timestamp: saveTimestamp
         }).then(() => {
-          console.log(`✅ Snapshot saved at ${new Date(saveTimestamp).toLocaleString('id-ID')}`);
-          showToast(`💾 Data tersimpan (${currentIntervalData.count} points)`, 'success');
+          console.log(` Snapshot saved at ${new Date(saveTimestamp).toLocaleString('en-US')}`);
+          showToast(` Data saved (${currentIntervalData.count} points)`, 'success');
           
           currentIntervalData = {
             voltage: [],
@@ -201,8 +201,8 @@ document.addEventListener("DOMContentLoaded", () => {
           lastSaveTime = currentInterval;
           loadAndProcessHistory();
         }).catch((error) => {
-          console.error("❌ Save error:", error);
-          showToast(`❌ Gagal menyimpan: ${error.message}`, 'error');
+          console.error(" Save error:", error);
+          showToast(` Failed to save: ${error.message}`, 'error');
         });
       }
     }
@@ -213,12 +213,12 @@ document.addEventListener("DOMContentLoaded", () => {
       
       onValue(historyRef, (snapshot) => {
         if (!snapshot.exists()) {
-          console.log("📚 No history data yet");
+          console.log(" No history data yet");
           return;
         }
 
         const history = snapshot.val();
-        console.log(`📚 Loading ${Object.keys(history).length} snapshots...`);
+        console.log(` Loading ${Object.keys(history).length} snapshots...`);
 
         dailyData = { labels: [], voltage: [], current: [], power: [], rpm: [], timestamps: [] };
         weeklyData = { labels: [], voltage: [], current: [], power: [], rpm: [], timestamps: [] };
@@ -236,14 +236,14 @@ document.addEventListener("DOMContentLoaded", () => {
             // Filter data yang valid
             const isValid = !isNaN(item.voltage) && !isNaN(item.current) && 
                            !isNaN(item.power) && !isNaN(item.rpm);
-            if (!isValid) console.warn("⚠️ Skipping invalid data:", item);
+            if (!isValid) console.warn(" Skipping invalid data:", item);
             return isValid;
           })
           .sort((a, b) => a.timestamp - b.timestamp);
 
-        console.log(`✅ ${historyArray.length} valid snapshots`);
+        console.log(` Processed ${historyArray.length} valid snapshots`);
 
-        // ===== DAILY (1 jam/24 jam terakhir) =====
+        // ===== DAILY (1 hour/24 hours ago) =====
         const dailyPeriod = TESTING_MODE ? (60 * 60 * 1000) : (24 * 60 * 60 * 1000);
         const dailyHistory = historyArray.filter(item => 
           item.timestamp >= Date.now() - dailyPeriod
@@ -253,7 +253,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const normalized = normalizeData(item.voltage, item.current, item.power, item.rpm);
           const date = new Date(item.timestamp);
           
-          dailyData.labels.push(date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }));
+          dailyData.labels.push(date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }));
           dailyData.voltage.push(normalized.voltage);
           dailyData.current.push(normalized.current);
           dailyData.power.push(normalized.power);
@@ -261,7 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
           dailyData.timestamps.push(item.timestamp);
         });
 
-        // ===== WEEKLY (3 jam/7 hari terakhir, group per 10min/1hari) =====
+        // ===== WEEKLY (3 hours/7 days ago, group per 10 minutes/1 day) =====
         const weeklyPeriod = TESTING_MODE ? (3 * 60 * 60 * 1000) : (7 * 24 * 60 * 60 * 1000);
         const weeklyHistory = historyArray.filter(item => 
           item.timestamp >= Date.now() - weeklyPeriod
@@ -289,8 +289,8 @@ document.addEventListener("DOMContentLoaded", () => {
           
           const date = new Date(parseInt(ts));
           const label = TESTING_MODE ?
-            date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) :
-            date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+            date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) :
+            date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
           
           weeklyData.labels.push(label);
           weeklyData.voltage.push(parseFloat((data.voltage.reduce((a, b) => a + b) / data.voltage.length).toFixed(2)));
@@ -300,7 +300,7 @@ document.addEventListener("DOMContentLoaded", () => {
           weeklyData.timestamps.push(parseInt(ts));
         });
 
-        // ===== MONTHLY (6 jam/30 hari terakhir, group per 30min/1minggu) =====
+        // ===== MONTHLY (6 hours/30 days ago, group per 30 minutes/1 week) =====
         const monthlyPeriod = TESTING_MODE ? (6 * 60 * 60 * 1000) : (30 * 24 * 60 * 60 * 1000);
         const monthlyHistory = historyArray.filter(item => 
           item.timestamp >= Date.now() - monthlyPeriod
@@ -328,8 +328,8 @@ document.addEventListener("DOMContentLoaded", () => {
           
           const date = new Date(parseInt(ts));
           const label = TESTING_MODE ?
-            date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) :
-            date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+            date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) :
+            date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
           
           monthlyData.labels.push(label);
           monthlyData.voltage.push(parseFloat((data.voltage.reduce((a, b) => a + b) / data.voltage.length).toFixed(2)));
@@ -339,7 +339,7 @@ document.addEventListener("DOMContentLoaded", () => {
           monthlyData.timestamps.push(parseInt(ts));
         });
 
-        console.log(`✅ Processed - Daily: ${dailyData.labels.length}, Weekly: ${weeklyData.labels.length}, Monthly: ${monthlyData.labels.length}`);
+        console.log(` Processed - Daily: ${dailyData.labels.length}, Weekly: ${weeklyData.labels.length}, Monthly: ${monthlyData.labels.length}`);
 
         // Update chart if viewing that tab
         const activeTab = document.querySelector(".tab-button.active");
@@ -381,19 +381,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function setChartData(source) {
       if (!source || source.labels.length === 0) {
-        chart.data.labels = ['Menunggu data...'];
+        chart.data.labels = ['Waiting for data...'];
         chart.data.datasets = [
-          { label: "Tegangan (V)", data: [0], borderColor: "#e53e3e", tension: 0.4, fill: false },
-          { label: "Arus (A)", data: [0], borderColor: "#3182ce", tension: 0.4, fill: false },
-          { label: "Daya (W)", data: [0], borderColor: "#38a169", tension: 0.4, fill: false },
+          { label: "Voltage (V)", data: [0], borderColor: "#e53e3e", tension: 0.4, fill: false },
+          { label: "Current (A)", data: [0], borderColor: "#3182ce", tension: 0.4, fill: false },
+          { label: "Power (W)", data: [0], borderColor: "#38a169", tension: 0.4, fill: false },
           { label: "RPM", data: [0], borderColor: "#d69e2e", yAxisID: "y1", tension: 0.4, fill: false },
         ];
       } else {
         chart.data.labels = source.labels;
         chart.data.datasets = [
-          { label: "Tegangan (V)", data: source.voltage, borderColor: "#e53e3e", tension: 0.4, fill: false },
-          { label: "Arus (A)", data: source.current, borderColor: "#3182ce", tension: 0.4, fill: false },
-          { label: "Daya (W)", data: source.power, borderColor: "#38a169", tension: 0.4, fill: false },
+          { label: "Voltage (V)", data: source.voltage, borderColor: "#e53e3e", tension: 0.4, fill: false },
+          { label: "Current (A)", data: source.current, borderColor: "#3182ce", tension: 0.4, fill: false },
+          { label: "Power (W)", data: source.power, borderColor: "#38a169", tension: 0.4, fill: false },
           { label: "RPM", data: source.rpm, borderColor: "#d69e2e", yAxisID: "y1", tension: 0.4, fill: false },
         ];
       }
@@ -440,7 +440,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     onValue(pltmhRef, (snapshot) => {
       if (!snapshot.exists()) {
-        console.warn("⚠️ PLTMH data tidak ada");
+        console.warn(" PLTMH data not available");
         return;
       }
       
@@ -492,7 +492,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Update realtime chart
       const now = new Date();
-      const timeLabel = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const timeLabel = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
       realtimeData.labels.push(timeLabel);
       realtimeData.voltage.push(voltage);

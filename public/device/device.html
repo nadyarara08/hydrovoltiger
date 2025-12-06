@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,22 +24,20 @@
             </div>
         </div>
 
-        <!-- SIDEBAR NAV - GANTI INI -->
+        <!-- SIDEBAR NAVIGATION -->
         <div class="nav-menu">
             <a href="../main.html" class="nav-item">
                 <ion-icon name="home-outline"></ion-icon>
                 <span>Home</span>
             </a>
-            <a href="../analytics/analytics.html" class="nav-item">  <!-- ⚠️ UBAH DARI mobile-nav-item JADI nav-item -->
-                <ion-icon name="analytics-outline"></ion-icon>
+            <a href="../analytics/analytics.html" class="nav-item">                  <ion-icon name="analytics-outline"></ion-icon>
                 <span>Analytics</span>
             </a>
             <a href="../news/news.html" class="nav-item">
                 <ion-icon name="newspaper-outline"></ion-icon>
                 <span>News</span>
             </a>
-            <a href="device.html" class="nav-item active">  <!-- TAMBAHKAN active DI SINI -->
-                <ion-icon name="hardware-chip-outline"></ion-icon>
+            <a href="device.html" class="nav-item active">                  <ion-icon name="hardware-chip-outline"></ion-icon>
                 <span>Device</span>
             </a>
             <a href="../Profile/Profile.html" class="nav-item">
@@ -61,14 +59,14 @@
             <div class="Profile-dropdown-nav" id="ProfileDropdownNav">
                 <div class="dropdown-item-nav">
                     <ion-icon name="settings-outline"></ion-icon>
-                    <span>Pengaturan</span>
+                    <span>Settings</span>
                 </div>
 
                 <div class="dropdown-divider-nav"></div>
 
                 <div class="dropdown-item-nav logout" id="logoutButton">
                     <ion-icon name="log-out-outline"></ion-icon>
-                    <span>Keluar</span>
+                    <span>Logout</span>
                 </div>
             </div>
         </div>
@@ -76,19 +74,19 @@
 
     <!-- MOBILE NAV -->
         <nav class="mobile-nav">
-            <a href="../main.html" class="mobile-nav-item active">
+            <a href="../main.html" class="mobile-nav-item">
                 <ion-icon name="home-outline"></ion-icon>
                 <span>Home</span>
             </a>
             <a href="../analytics/analytics.html" class="mobile-nav-item">
-                    <ion-icon name="analytics-outline"></ion-icon>
-                    <span>Analytics</span>
+                <ion-icon name="analytics-outline"></ion-icon>
+                <span>Analytics</span>
             </a>
             <a href="../news/news.html" class="mobile-nav-item">
                 <ion-icon name="newspaper-outline"></ion-icon>
                 <span>News</span>
             </a>
-            <a href="device.html" class="mobile-nav-item">
+            <a href="device.html" class="mobile-nav-item active">
                 <ion-icon name="hardware-chip-outline"></ion-icon>
                 <span>Device</span>
             </a>
@@ -104,17 +102,17 @@
 
         <div class="page-header">
           <h1>Device Monitoring</h1>
-          <p>Kelola dan pantau perangkat Anda secara realtime</p>
+          <p>Manage and monitor your devices in real-time</p>
         </div>
 
         <!-- MAP SECTION -->
-        <h2 class="section-title">Peta Lokasi Device</h2>
+        <h2 class="section-title">Device Location Map</h2>
         <div id="deviceMap"></div>
 
         <!-- DEVICE LIST -->
-        <h2 class="section-title">Daftar Device</h2>
+        <h2 class="section-title">Device List</h2>
         <div class="device-grid" id="deviceList">
-          <!-- device di-load otomatis lewat Firebase -->
+          <!-- device loaded automatically via Firebase -->
         </div>
 
       </div>

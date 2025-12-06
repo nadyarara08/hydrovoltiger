@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -55,12 +55,12 @@
                 <div class="Profile-dropdown-nav" id="ProfileDropdownNav">
                     <div class="dropdown-item-nav">
                         <ion-icon name="settings-outline"></ion-icon>
-                        <span>Pengaturan</span>
+                        <span>Settings</span>
                     </div>
                     <div class="dropdown-divider-nav"></div>
                     <div class="dropdown-item-nav logout">
                         <ion-icon name="log-out-outline"></ion-icon>
-                        <span>Keluar</span>
+                        <span>Logout</span>
                     </div>
                 </div>
             </div>
@@ -97,8 +97,8 @@
                     <div class="header-top">
                         <div class="header-left">
                             <div class="header-title-wrapper">
-                                <h1>Analytics & Prediksi Energi</h1>
-                                <p class="header-subtitle">Monitor penggunaan daya dan estimasi biaya Anda</p>
+                                <h1>Analytics & Energy Prediction</h1>
+                                <p class="header-subtitle">Monitor your power usage and cost estimates</p>
                             </div>
                         </div>
                     </div>
@@ -111,7 +111,7 @@
                             <ion-icon name="flash-outline"></ion-icon>
                         </div>
                         <div class="stat-info">
-                            <span class="stat-label">Daya Saat Ini</span>
+                            <span class="stat-label">Current Power</span>
                             <span class="stat-value" id="currentPowerStat">0 W</span>
                         </div>
                     </div>
@@ -120,37 +120,37 @@
                             <ion-icon name="pulse-outline"></ion-icon>
                         </div>
                         <div class="stat-info">
-                            <span class="stat-label">Status Efisiensi</span>
-                            <span class="stat-value" id="efficiencyStatus">Memuat...</span>
+                            <span class="stat-label">Efficiency Status</span>
+                            <span class="stat-value" id="efficiencyStatus">Loading...</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Main Analytics Grid -->
                 <div class="analytics-grid">
-                    <!-- Rekomendasi Hemat Energi -->
+                    <!-- Energy Saving Recommendations -->
                     <div class="analytics-card recommendation-card">
                         <div class="card-header">
                             <div class="card-header-left">
                                 <div class="card-icon recommendation">
                                     <ion-icon name="bulb-outline"></ion-icon>
                                 </div>
-                                <h2>Rekomendasi Hemat Energi</h2>
+                                <h2>Energy Saving Recommendations</h2>
                             </div>
                             <div class="status-badge" id="recommendationBadge">
                                 <ion-icon name="checkmark-circle"></ion-icon>
-                                <span>Sangat Efisien</span>
+                                <span>Highly Efficient</span>
                             </div>
                         </div>
                         <div class="card-content">
                             <div class="recommendation-details">
                                 <div class="detail-item">
-                                    <span class="detail-label">Daya Saat Ini</span>
+                                    <span class="detail-label">Current Power</span>
                                     <span class="detail-value" id="currentPowerDetail">0 W</span>
                                 </div>
                                 <div class="recommendation-text" id="recommendationText">
                                     <ion-icon name="information-circle-outline"></ion-icon>
-                                    <p>Sedang menganalisis data Anda...</p>
+                                    <p>Analyzing your data...</p>
                                 </div>
                             </div>
                         </div>
@@ -163,7 +163,7 @@
                                 <div class="card-icon prediction">
                                     <ion-icon name="trending-up-outline"></ion-icon>
                                 </div>
-                                <h2>Prediksi Penggunaan Bulanan</h2>
+                                <h2>Monthly Energy Prediction</h2>
                             </div>
                         </div>
                         <div class="card-content">
@@ -171,21 +171,21 @@
                                 <div class="prediction-item">
                                     <div class="prediction-label">
                                         <ion-icon name="calendar-outline"></ion-icon>
-                                        <span>Konsumsi Harian</span>
+                                        <span>Comparison to average 900VA household</span>
                                     </div>
                                     <div class="prediction-value" id="dailyConsumption">0 Wh</div>
                                 </div>
                                 <div class="prediction-item">
                                     <div class="prediction-label">
                                         <ion-icon name="time-outline"></ion-icon>
-                                        <span>Konsumsi Bulanan</span>
+                                        <span>This Month's Statistics</span>
                                     </div>
                                     <div class="prediction-value highlight" id="monthlyConsumption">0 kWh</div>
                                 </div>
                             </div>
                             <div class="prediction-note">
                                 <ion-icon name="information-circle-outline"></ion-icon>
-                                <p>Berdasarkan penggunaan 8 jam/hari selama 30 hari</p>
+                                <p>Based on 8 hours/day usage for 30 days</p>
                             </div>
                         </div>
                     </div>
@@ -197,18 +197,18 @@
                                 <div class="card-icon cost">
                                     <ion-icon name="cash-outline"></ion-icon>
                                 </div>
-                                <h2>Estimasi Biaya Listrik</h2>
+                                <h2>Estimated Monthly Cost</h2>
                             </div>
                         </div>
                         <div class="card-content">
                             <div class="cost-breakdown">
                                 <div class="cost-item">
-                                    <span class="cost-label">Tarif per kWh (PLN R1/900VA)</span>
+                                    <span class="cost-label">Electricity Rate per kWh (PLN R1/900VA)</span>
                                     <span class="cost-value">Rp 1.444,70</span>
                                 </div>
                                 <div class="cost-divider"></div>
                                 <div class="cost-item main-cost">
-                                    <span class="cost-label">Estimasi Biaya Bulanan</span>
+                                    <span class="cost-label">Estimated Monthly Cost</span>
                                     <span class="cost-value large" id="monthlyCost">Rp 0</span>
                                 </div>
                             </div>
@@ -217,7 +217,7 @@
                                     <div class="cost-bar-fill" id="costBarFill"></div>
                                 </div>
                                 <div class="cost-comparison">
-                                    <span class="comparison-label">Perbandingan dengan rata-rata rumah tangga 900VA</span>
+                                    <span class="comparison-label">Usage Comparison to average 900VA household</span>
                                     <span class="comparison-value" id="costComparison">-</span>
                                 </div>
                             </div>
@@ -231,26 +231,26 @@
                                 <div class="card-icon tips">
                                     <ion-icon name="leaf-outline"></ion-icon>
                                 </div>
-                                <h2>Tips Hemat Energi</h2>
+                                <h2>Energy Saving Tips</h2>
                             </div>
                         </div>
                         <div class="card-content">
                             <div class="tips-list">
                                 <div class="tip-item">
                                     <ion-icon name="checkmark-circle-outline"></ion-icon>
-                                    <p>Matikan perangkat elektronik yang tidak digunakan</p>
+                                    <p>Turn off unused electronic devices</p>
                                 </div>
                                 <div class="tip-item">
                                     <ion-icon name="checkmark-circle-outline"></ion-icon>
-                                    <p>Gunakan lampu LED untuk efisiensi maksimal</p>
+                                    <p>Use LED bulbs for maximum efficiency</p>
                                 </div>
                                 <div class="tip-item">
                                     <ion-icon name="checkmark-circle-outline"></ion-icon>
-                                    <p>Atur suhu AC pada 24-26°C untuk kenyamanan optimal</p>
+                                    <p>Set your AC temperature to 24-26°C for optimal comfort</p>
                                 </div>
                                 <div class="tip-item">
                                     <ion-icon name="checkmark-circle-outline"></ion-icon>
-                                    <p>Cabut charger setelah perangkat terisi penuh</p>
+                                    <p>Unplug chargers when devices are fully charged</p>
                                 </div>
                             </div>
                         </div>

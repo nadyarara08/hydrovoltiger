@@ -76,26 +76,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (settingsItemNav) {
       settingsItemNav.addEventListener("click", () => {
-        showToast("Pengaturan belum tersedia");
+        showToast("Settings not available yet");
       });
     }
 
     if (logoutItemNav) {
       logoutItemNav.addEventListener("click", () => {
         console.log("🚪 Logging out...");
-        showToast("Memproses logout...");
+        showToast("Processing logout...");
 
         signOut(auth)
           .then(() => {
             console.log("✅ Logout successful");
-            showToast("Logout berhasil!");
+            showToast("Logout successful!");
             setTimeout(() => {
               window.location.href = "../login/login.html";
             }, 700);
           })
           .catch((error) => {
             console.error("❌ Logout error:", error);
-            showToast("Terjadi kesalahan saat logout. Silahkan coba lagi.");
+            showToast("An error occurred during logout. Please try again.");
           });
       });
     }
@@ -109,7 +109,7 @@ function initAnalytics() {
   const pltmhRef = ref(db, "PLTMH");
   const historyRef = ref(db, "history");
 
-  // Load historical data untuk analisis trend
+  // Load historical data for trend analysis
   onValue(historyRef, (snapshot) => {
     if (snapshot.exists()) {
       const history = snapshot.val();
@@ -138,7 +138,7 @@ function initAnalytics() {
   });
 }
 
-// Fungsi untuk memproses data historis
+// Function to process historical data
 function processHistoricalData(history) {
   const now = new Date();
   const oneDayAgo = now.getTime() - (24 * 60 * 60 * 1000);
@@ -202,12 +202,12 @@ async function updateAnalytics() {
   // Update Cost
   updateCost(powerInWatt);
   
-  // Get AI Analysis menggunakan Gemini
+  // Get AI Analysis using Gemini
   await getGeminiAnalysis();
 }
 
 async function getGeminiAnalysis() {
-  // Cek cache - jangan analisis terlalu sering (max 1x per 2 menit)
+  // Check cache - don't analyze too frequently (max 1x per 2 minutes)
   const now = Date.now();
   if (aiAnalysisCache.lastAnalyzed && (now - aiAnalysisCache.lastAnalyzed) < 120000) {
     console.log("🤖 Using cached AI analysis");
@@ -234,83 +234,83 @@ async function getGeminiAnalysis() {
     const monthlyKWh = (dailyWh * daysPerMonth) / 1000;
     const monthlyCost = monthlyKWh * TARIF_PER_KWH;
 
-    // Hitung trend dari data historis
+    // Calculate trend from historical data
     const dailyTrend = calculateTrend(historicalData.daily);
     const weeklyTrend = calculateTrend(historicalData.weekly);
     const monthlyTrend = calculateTrend(historicalData.monthly);
 
-    // Hitung peak hours (jam dengan konsumsi tertinggi)
+    // Calculate peak hours (hours with highest consumption)
     const peakHours = findPeakHours(historicalData.daily);
 
-    // Prepare prompt untuk Gemini AI
-    const prompt = `Kamu adalah AI assistant ahli dalam analisis energi untuk sistem monitoring Hydrovoltiger PLTMH (Pembangkit Listrik Tenaga Mikro Hidro). 
+    // Prepare prompt for Gemini AI
+    const prompt = `You are an AI assistant expert in energy analysis for the Hydrovoltiger PLTMH (Micro Hydro Power Plant) monitoring system.
 
-Analisis data berikut dan berikan rekomendasi SPESIFIK dan ACTIONABLE dalam bahasa Indonesia:
+Analyze the following data and provide specific and actionable recommendations in English:
 
-DATA REALTIME SAAT INI:
-- Tegangan: ${currentData.voltage.toFixed(2)} V
-- Arus: ${currentData.current.toFixed(2)} mA
-- Daya: ${powerInWatt.toFixed(2)} W
+REAL-TIME DATA:
+- Voltage: ${currentData.voltage.toFixed(2)} V
+- Current: ${currentData.current.toFixed(2)} mA
+- Power: ${powerInWatt.toFixed(2)} W
 - RPM Turbin: ${currentData.rpm.toFixed(2)}
-- Total Energi Dihasilkan: ${currentData.totalEnergy.toFixed(4)} mWh
+- Total Energy Produced: ${currentData.totalEnergy.toFixed(4)} mWh
 
-PREDIKSI KONSUMSI & BIAYA:
-- Konsumsi Harian: ${dailyWh.toFixed(2)} Wh
-- Konsumsi Bulanan: ${monthlyKWh.toFixed(2)} kWh
-- Estimasi Biaya Bulanan: Rp ${Math.round(monthlyCost).toLocaleString('id-ID')}
-- Rata-rata biaya rumah tangga 900VA: Rp ${AVERAGE_MONTHLY_COST.toLocaleString('id-ID')}
-- Selisih dengan rata-rata: Rp ${Math.round(monthlyCost - AVERAGE_MONTHLY_COST).toLocaleString('id-ID')}
+CONSUMPTION AND COST PREDICTION:
+- Daily Consumption: ${dailyWh.toFixed(2)} Wh
+- Monthly Consumption: ${monthlyKWh.toFixed(2)} kWh
+- Estimated Monthly Cost: Rp ${Math.round(monthlyCost).toLocaleString('id-ID')}
+- Average monthly cost for 900VA: Rp ${AVERAGE_MONTHLY_COST.toLocaleString('id-ID')}
+- Difference with average: Rp ${Math.round(monthlyCost - AVERAGE_MONTHLY_COST).toLocaleString('id-ID')}
 
-ANALISIS TREND:
-- Trend Harian: ${dailyTrend.direction} (${dailyTrend.percentage.toFixed(1)}%)
-- Trend Mingguan: ${weeklyTrend.direction} (${weeklyTrend.percentage.toFixed(1)}%)
-- Trend Bulanan: ${monthlyTrend.direction} (${monthlyTrend.percentage.toFixed(1)}%)
+TREND ANALYSIS:
+- Daily Trend: ${dailyTrend.direction} (${dailyTrend.percentage.toFixed(1)}%)
+- Weekly Trend: ${weeklyTrend.direction} (${weeklyTrend.percentage.toFixed(1)}%)
+- Monthly Trend: ${monthlyTrend.direction} (${monthlyTrend.percentage.toFixed(1)}%)
 
 PEAK USAGE:
-- Jam Puncak Konsumsi: ${peakHours.join(', ')}
-- Rata-rata Daya Harian: ${calculateAverage(historicalData.daily).toFixed(2)} W
+- Peak Hours: ${peakHours.join(', ')}
+- Average Daily Power: ${calculateAverage(historicalData.daily).toFixed(2)} W
 
-KONDISI SISTEM PLTMH:
-- Status RPM: ${currentData.rpm > 1000 ? 'Optimal' : currentData.rpm > 500 ? 'Normal' : 'Rendah'}
-- Efisiensi Estimasi: ${calculateEfficiency(currentData)}%
-- Status Tegangan: ${currentData.voltage >= 200 && currentData.voltage <= 240 ? 'Stabil' : 'Perlu Perhatian'}
+SYSTEM CONDITION:
+- RPM Status: ${currentData.rpm > 1000 ? 'Optimal' : currentData.rpm > 500 ? 'Normal' : 'Low'}
+- Estimated Efficiency: ${calculateEfficiency(currentData)}%
+- Voltage Status: ${currentData.voltage >= 200 && currentData.voltage <= 240 ? 'Stable' : 'Needs Attention'}
 
-TUGAS ANALISIS:
-1. Tentukan status efisiensi: "Sangat Efisien" (jika biaya < Rp 100.000), "Cukup Efisien" (Rp 100.000 - Rp 150.000), atau "Perlu Optimasi" (> Rp 150.000)
+ANALYSIS TASK:
+1. Determine efficiency status: "Very Efficient" (if cost < Rp 100,000), "Efficient" (Rp 100,000 - Rp 150,000), or "Needs Optimization" (> Rp 150,000)
 
-2. Berikan analisis lengkap meliputi:
-   - Kondisi sistem PLTMH (kesehatan turbin, stabilitas output)
-   - Pola konsumsi energi dan efisiensi
-   - Proyeksi biaya dan potensi penghematan
-   - Identifikasi masalah atau anomali jika ada
+2. Provide a comprehensive analysis including:
+   - System condition (turbine health, output stability)
+   - Energy consumption pattern and efficiency
+   - Cost projection and potential savings
+   - Identification of problems or anomalies if any
 
-3. Berikan 4-6 rekomendasi KONKRET dan SPESIFIK untuk:
-   - Mengurangi biaya listrik bulanan
-   - Mengoptimalkan performa PLTMH
-   - Meningkatkan efisiensi energi
-   - Maintenance preventif
-   - Load management (pengaturan beban)
-   - Pemanfaatan waktu peak/off-peak
+3. Provide 4-6 specific and actionable recommendations for:
+   - Reducing monthly electricity costs
+   - Optimizing PLTMH performance
+   - Improving energy efficiency
+   - Preventive maintenance
+   - Load management (load control)
+   - Peak/off-peak time utilization
 
-4. Jika biaya tinggi atau ada masalah, berikan WARNING dan solusi URGENT
+4. If cost is high or there are problems, provide a WARNING and urgent solution
 
-Format response HARUS dalam JSON (tanpa markdown backticks):
+Format response MUST be in JSON (without markdown backticks):
 {
   "status": "good/moderate/high",
-  "statusText": "Sangat Efisien/Cukup Efisien/Perlu Optimasi",
-  "analysis": "Analisis lengkap 3-4 kalimat yang mencakup kondisi sistem, efisiensi, dan proyeksi biaya",
-  "costSavingPotential": "Estimasi penghematan dalam rupiah per bulan",
+  "statusText": "Very Efficient/Efficient/Needs Optimization",
+  "analysis": "Comprehensive analysis 3-4 sentences that includes system condition, efficiency, and cost projection",
+  "costSavingPotential": "Estimated savings in Rupiah per month",
   "recommendations": [
-    "Rekomendasi konkret 1 dengan detail implementasi",
-    "Rekomendasi konkret 2 dengan detail implementasi",
-    "Rekomendasi konkret 3 dengan detail implementasi",
-    "Rekomendasi konkret 4 dengan detail implementasi"
+    "Specific recommendation 1 with implementation details",
+    "Specific recommendation 2 with implementation details",
+    "Specific recommendation 3 with implementation details",
+    "Specific recommendation 4 with implementation details"
   ],
-  "urgentActions": ["Aksi urgent jika ada masalah serius"],
-  "maintenanceAdvice": "Saran maintenance berdasarkan kondisi saat ini"
+  "urgentActions": ["Urgent action if there are serious problems"],
+  "maintenanceAdvice": "Maintenance advice based on current condition"
 }`;
 
-    // Panggil Gemini API
+    // Call Gemini API
     const response = await fetch("https://hydrovoltiger-production.up.railway.app/api/gemini", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -329,7 +329,7 @@ Format response HARUS dalam JSON (tanpa markdown backticks):
     try {
       const aiText = data.text || data.result || "";
       
-      // Cari JSON dalam response
+      // Find JSON in response
       const jsonMatch = aiText.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         aiResult = JSON.parse(jsonMatch[0]);
@@ -338,7 +338,7 @@ Format response HARUS dalam JSON (tanpa markdown backticks):
       }
     } catch (parseError) {
       console.error("❌ Error parsing Gemini response:", parseError);
-      // Fallback ke analisis dasar
+      // Fallback to basic analysis
       aiResult = getBasicAnalysis(powerInWatt, monthlyCost);
     }
 
@@ -361,10 +361,10 @@ Format response HARUS dalam JSON (tanpa markdown backticks):
   }
 }
 
-// Fungsi untuk menghitung trend
+// Function to calculate trend
 function calculateTrend(data) {
   if (data.length < 2) {
-    return { direction: "Tidak cukup data", percentage: 0 };
+    return { direction: "Insufficient data", percentage: 0 };
   }
 
   const firstHalf = data.slice(0, Math.floor(data.length / 2));
@@ -375,16 +375,16 @@ function calculateTrend(data) {
 
   const percentage = ((avgSecond - avgFirst) / avgFirst) * 100;
 
-  let direction = "Stabil";
-  if (percentage > 5) direction = "Naik";
-  else if (percentage < -5) direction = "Turun";
+  let direction = "Stable";
+  if (percentage > 5) direction = "Increasing";
+  else if (percentage < -5) direction = "Decreasing";
 
   return { direction, percentage: Math.abs(percentage) };
 }
 
-// Fungsi untuk mencari jam puncak konsumsi
+// Function to find peak hours
 function findPeakHours(data) {
-  if (data.length === 0) return ["Data tidak tersedia"];
+  if (data.length === 0) return ["No data available"];
 
   const hourlyAvg = {};
   
@@ -407,58 +407,58 @@ function findPeakHours(data) {
   return avgByHour.slice(0, 3).map(h => `${h.hour}:00-${h.hour + 1}:00`);
 }
 
-// Fungsi untuk menghitung rata-rata
+// Function to calculate average
 function calculateAverage(data) {
   if (data.length === 0) return 0;
   const sum = data.reduce((total, d) => total + d.power, 0);
   return sum / data.length / 1000; // Convert to W
 }
 
-// Fungsi untuk menghitung efisiensi
+// Function to calculate efficiency
 function calculateEfficiency(data) {
-  // Efisiensi sederhana berdasarkan rasio daya output vs RPM
-  const expectedPower = (data.rpm / 1000) * 100; // Asumsi: 100W per 1000 RPM
+  // Simple efficiency based on power output vs RPM ratio
+  const expectedPower = (data.rpm / 1000) * 100; // Assume: 100W per 1000 RPM
   const actualPower = data.power / 1000;
   const efficiency = (actualPower / expectedPower) * 100;
   return Math.min(100, Math.max(0, efficiency)).toFixed(1);
 }
 
 function getBasicAnalysis(powerInWatt, monthlyCost) {
-  // Fallback analysis jika Gemini gagal
+  // Fallback analysis if Gemini fails
   let status, statusText, costSavingPotential;
   
   if (monthlyCost < 100000) {
     status = "good";
-    statusText = "Sangat Efisien";
-    costSavingPotential = "Rp 10.000 - Rp 20.000 dengan optimasi minor";
+    statusText = "Very Efficient";
+    costSavingPotential = "Rp 10,000 - Rp 20,000 with minor optimization";
   } else if (monthlyCost < 150000) {
     status = "moderate";
-    statusText = "Cukup Efisien";
-    costSavingPotential = "Rp 20.000 - Rp 40.000 dengan optimasi beban";
+    statusText = "Efficient";
+    costSavingPotential = "Rp 20,000 - Rp 40,000 with load optimization";
   } else {
     status = "high";
-    statusText = "Perlu Optimasi";
-    costSavingPotential = "Rp 40.000 - Rp 80.000 dengan manajemen energi";
+    statusText = "Needs Optimization";
+    costSavingPotential = "Rp 40,000 - Rp 80,000 with energy management";
   }
 
   return {
     status,
     statusText,
-    analysis: `Sistem PLTMH Anda menghasilkan daya ${powerInWatt.toFixed(2)}W dengan estimasi biaya bulanan Rp ${Math.round(monthlyCost).toLocaleString('id-ID')}. ${status === 'good' ? 'Performa sangat baik dan efisien.' : status === 'moderate' ? 'Masih dalam batas wajar namun ada ruang untuk optimasi.' : 'Konsumsi tinggi, diperlukan optimasi segera.'} Dengan manajemen yang tepat, Anda dapat mengoptimalkan penggunaan energi dan mengurangi biaya operasional.`,
+    analysis: `Your PLTMH system is producing ${powerInWatt.toFixed(2)}W with an estimated monthly cost of Rp ${Math.round(monthlyCost).toLocaleString('id-ID')}. ${status === 'good' ? 'Performance is very good and efficient.' : status === 'moderate' ? 'Still within reasonable limits but there is room for optimization.' : 'Consumption is high, optimization is needed.'} With proper management, you can optimize energy usage and reduce operational costs.`,
     costSavingPotential,
     recommendations: [
-      "Lakukan monitoring rutin setiap hari untuk mendeteksi anomali konsumsi daya",
-      "Optimalkan jadwal penggunaan di luar jam puncak (${findPeakHours(historicalData.daily).join(', ')})",
-      "Periksa kondisi turbin dan pastikan tidak ada hambatan aliran air",
-      status === 'high' ? "URGENT: Kurangi beban listrik segera untuk mencegah overload" : "Pertimbangkan penggunaan perangkat hemat energi",
-      "Lakukan maintenance preventif setiap 2 minggu untuk menjaga efisiensi optimal",
-      "Catat pola konsumsi untuk identifikasi peluang penghematan lebih lanjut"
+      "Perform daily monitoring to detect anomalies in power consumption",
+      "Optimize usage schedule outside peak hours (${findPeakHours(historicalData.daily).join(', ')})",
+      "Check turbine condition and ensure there are no water flow obstructions",
+      status === 'high' ? "URGENT: Reduce electricity load immediately to prevent overload" : "Consider using energy-saving devices",
+      "Perform preventive maintenance every 2 weeks to maintain optimal efficiency",
+      "Record consumption patterns to identify further savings opportunities"
     ],
     urgentActions: status === 'high' ? [
-      "Matikan perangkat non-esensial segera",
-      "Cek sistem PLTMH untuk memastikan tidak ada masalah teknis"
+      "Turn off non-essential devices immediately",
+      "Check the PLTMH system to ensure there are no technical issues"
     ] : [],
-    maintenanceAdvice: `Berdasarkan RPM ${currentData.rpm.toFixed(0)}, ${currentData.rpm > 1000 ? 'sistem dalam kondisi baik. Lanjutkan maintenance rutin.' : currentData.rpm > 500 ? 'periksa aliran air dan bersihkan filter turbin.' : 'segera cek sistem - RPM terlalu rendah!'}`
+    maintenanceAdvice: `Based on RPM ${currentData.rpm.toFixed(0)}, ${currentData.rpm > 1000 ? 'the system is in good condition. Continue with routine maintenance.' : currentData.rpm > 500 ? 'check water flow and clean the turbine filter.' : 'immediately check the system - RPM is too low!'}`
   };
 }
 
@@ -471,7 +471,7 @@ function showAILoadingState() {
     badge.className = "status-badge";
     badge.innerHTML = `
       <ion-icon name="hourglass-outline"></ion-icon>
-      <span>Menganalisis dengan AI...</span>
+      <span>Processing AI analysis...</span>
     `;
   }
   
@@ -484,7 +484,7 @@ function showAILoadingState() {
   if (recommendationText) {
     recommendationText.innerHTML = `
       <ion-icon name="sync-outline" style="animation: spin 1s linear infinite;"></ion-icon>
-      <p>🤖 Gemini AI sedang menganalisis data PLTMH Anda secara mendalam untuk memberikan rekomendasi terbaik...</p>
+      <p>🤖 Gemini AI is analyzing your PLTMH data in-depth to provide the best recommendations...</p>
     `;
   }
 }
@@ -538,7 +538,7 @@ function displayAIRecommendation(result) {
     
     const urgentHTML = result.urgentActions && result.urgentActions.length > 0 ? `
       <div style="padding: 12px; background: rgba(229, 62, 62, 0.1); border-radius: 10px; border-left: 3px solid #e53e3e; margin-bottom: 12px;">
-        <p style="margin: 0 0 8px 0; font-weight: 600; color: #e53e3e; font-size: 0.9rem;">⚠️ Tindakan Urgent:</p>
+        <p style="margin: 0 0 8px 0; font-weight: 600; color: #e53e3e; font-size: 0.9rem;">⚠️ Urgent Actions:</p>
         <ul style="margin: 0; padding-left: 20px; color: #e53e3e; font-size: 0.85rem; line-height: 1.8;">
           ${result.urgentActions.map(action => `<li>${action}</li>`).join('')}
         </ul>
@@ -547,7 +547,7 @@ function displayAIRecommendation(result) {
 
     const savingHTML = result.costSavingPotential ? `
       <div style="padding: 12px; background: rgba(56, 161, 105, 0.1); border-radius: 10px; border-left: 3px solid #38a169; margin-bottom: 12px;">
-        <p style="margin: 0; font-weight: 600; color: #38a169; font-size: 0.9rem;">💰 Potensi Penghematan: ${result.costSavingPotential}</p>
+        <p style="margin: 0; font-weight: 600; color: #38a169; font-size: 0.9rem;">💰 Saving Potential: ${result.costSavingPotential}</p>
       </div>
     ` : '';
     
@@ -562,7 +562,7 @@ function displayAIRecommendation(result) {
         ${savingHTML}
         
         <div style="padding: 12px; background: rgba(18, 52, 64, 0.04); border-radius: 10px; border-left: 3px solid var(--accent-primary);">
-          <p style="margin: 0 0 8px 0; font-weight: 600; color: var(--accent-primary); font-size: 0.9rem;">💡 Rekomendasi AI:</p>
+          <p style="margin: 0 0 8px 0; font-weight: 600; color: var(--accent-primary); font-size: 0.9rem;">💡 AI Recommendations:</p>
           <ul style="margin: 0; padding-left: 20px; color: var(--text-primary); font-size: 0.9rem; line-height: 1.8;">
             ${recommendationsHTML}
           </ul>
@@ -570,7 +570,7 @@ function displayAIRecommendation(result) {
         
         ${result.maintenanceAdvice ? `
         <div style="padding: 12px; background: rgba(214, 158, 46, 0.1); border-radius: 10px; border-left: 3px solid #d69e2e;">
-          <p style="margin: 0; font-weight: 600; color: #d69e2e; font-size: 0.85rem;">🔧 Saran Maintenance:</p>
+          <p style="margin: 0; font-weight: 600; color: #d69e2e; font-size: 0.85rem;">🔧 Maintenance Advice:</p>
           <p style="margin: 4px 0 0 0; color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6;">${result.maintenanceAdvice}</p>
         </div>
         ` : ''}
@@ -650,13 +650,13 @@ function updateCost(powerInWatt) {
     const percentage = Math.abs((difference / AVERAGE_MONTHLY_COST) * 100);
     
     if (difference < 0) {
-      costComparison.textContent = `${percentage.toFixed(0)}% lebih hemat`;
+      costComparison.textContent = `${percentage.toFixed(0)}% more efficient`;
       costComparison.style.color = "#38a169";
     } else if (difference > 0) {
-      costComparison.textContent = `${percentage.toFixed(0)}% lebih tinggi`;
+      costComparison.textContent = `${percentage.toFixed(0)}% higher`;
       costComparison.style.color = "#e53e3e";
     } else {
-      costComparison.textContent = `Sesuai rata-rata`;
+      costComparison.textContent = `Average`;
       costComparison.style.color = "#d69e2e";
     }
   }

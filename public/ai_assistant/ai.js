@@ -4,7 +4,7 @@ import { db } from "../auth/firebase-init.js";
 
 const converter = new showdown.Converter();
 
-// Global variables untuk menyimpan data realtime
+// Global variables to store real-time data
 let currentData = {
   voltage: 0,
   current: 0,
@@ -13,11 +13,11 @@ let currentData = {
   totalEnergy: 0
 };
 
-// Tarif listrik PLN per kWh (dalam Rupiah)
+// PLN electricity tariff per kWh (in Rupiah)
 const TARIF_PER_KWH = 1444.70;
 
 /**
- * Fungsi untuk membuka/menutup chat - FIXED untuk main.html
+ * Function to open/close chat - FIXED for main.html
  */
 function openChat() {
   const overlay = document.getElementById('aiOverlay');
@@ -47,7 +47,7 @@ function closeChat() {
   
   if (overlay) {
     overlay.classList.remove('show');
-    document.body.style.overflow = ''; // Restore scrolling
+    document.body.style.overflow = 'auto'; // Restore scrolling
   }
   if (sidebar) {
     sidebar.classList.remove('show');
@@ -58,14 +58,14 @@ function closeChat() {
 }
 
 /**
- * Mengambil data realtime dari Firebase
+ * Get real-time data from Firebase
  */
 function listenToRealtimeData() {
   const pltmhRef = ref(db, "PLTMH");
   
   onValue(pltmhRef, (snapshot) => {
     if (!snapshot.exists()) {
-      console.warn("Data PLTMH tidak ditemukan di Firebase");
+      console.warn("PLTMH data not found in Firebase");
       return;
     }
     const data = snapshot.val();
@@ -78,14 +78,14 @@ function listenToRealtimeData() {
       totalEnergy: parseFloat(data.Total_Energi_mWh || 0)
     };
     
-    console.log("Data PLTMH updated:", currentData);
+    console.log("PLTMH data updated:", currentData);
   }, (error) => {
     console.error("Error listening to Firebase:", error);
   });
 }
 
 /**
- * Menghitung prediksi penggunaan dan biaya bulanan
+ * Calculate monthly prediction and cost
  */
 function calculateMonthlyPrediction() {
   const powerInWatt = currentData.power / 1000;
@@ -104,7 +104,7 @@ function calculateMonthlyPrediction() {
 }
 
 /**
- * Memberikan rekomendasi berdasarkan penggunaan daya
+ * Generate recommendation based on power usage
  */
 function generateRecommendation() {
   const powerInWatt = currentData.power / 1000;
@@ -114,15 +114,15 @@ function generateRecommendation() {
   let icon = "checkmark-circle";
   
   if (powerInWatt < 50) {
-    recommendation = "Penggunaan daya sangat efisien! Teruskan pola konsumsi ini.";
+    recommendation = "Power usage is very efficient! Continue this consumption pattern.";
     status = "good";
     icon = "checkmark-circle";
   } else if (powerInWatt >= 50 && powerInWatt < 150) {
-    recommendation = "Penggunaan daya dalam batas wajar. Pertimbangkan untuk mematikan perangkat yang tidak terpakai.";
+    recommendation = "Power usage is within a reasonable limit. Consider turning off unused devices.";
     status = "moderate";
     icon = "warning";
   } else {
-    recommendation = "⚠️ Penggunaan daya tinggi terdeteksi! Segera kurangi beban untuk menghemat energi dan biaya.";
+    recommendation = "⚠️ High power usage detected! Reduce the load to save energy and cost.";
     status = "high";
     icon = "alert-circle";
   }
@@ -131,7 +131,7 @@ function generateRecommendation() {
 }
 
 /**
- * Toggle fungsi untuk membuka/menutup analysis card
+ * Toggle function for opening/closing analysis card
  */
 function toggleAnalysisCard(cardId) {
   const content = document.getElementById(`${cardId}-content`);
@@ -144,7 +144,7 @@ function toggleAnalysisCard(cardId) {
 }
 
 /**
- * Membuat HTML untuk kartu analisis dengan collapse functionality
+ * Create HTML for analysis card with collapse functionality
  */
 function createAnalysisCard(type) {
   const prediction = calculateMonthlyPrediction();
@@ -157,20 +157,20 @@ function createAnalysisCard(type) {
         <div class="analysis-header" onclick="toggleAnalysisCard('${cardId}')">
           <div class="analysis-header-left">
             <ion-icon name="${recommendation.icon}"></ion-icon>
-            <h4>Rekomendasi Hemat Energi</h4>
+            <h4>Energy Saving Recommendation</h4>
           </div>
           <ion-icon name="chevron-down" class="analysis-toggle" id="${cardId}-toggle"></ion-icon>
         </div>
         <div class="analysis-content" id="${cardId}-content">
           <div class="analysis-item">
-            <span class="analysis-label">Daya Saat Ini:</span>
+            <span class="analysis-label">Current Power:</span>
             <span class="analysis-value ${recommendation.status === 'good' ? 'success' : recommendation.status === 'moderate' ? 'warning' : 'danger'}">
               ${prediction.currentPowerW} W
             </span>
           </div>
           <div class="recommendation-badge ${recommendation.status}">
             <ion-icon name="${recommendation.icon}"></ion-icon>
-            ${recommendation.status === 'good' ? 'Sangat Efisien' : recommendation.status === 'moderate' ? 'Cukup Efisien' : 'Perlu Hemat'}
+            ${recommendation.status === 'good' ? 'Very Efficient' : recommendation.status === 'moderate' ? 'Moderately Efficient' : 'Needs Improvement'}
           </div>
           <p style="margin-top: 10px; font-size: 0.9rem; line-height: 1.5; color: var(--text-secondary);">
             ${recommendation.recommendation}
@@ -184,21 +184,21 @@ function createAnalysisCard(type) {
         <div class="analysis-header" onclick="toggleAnalysisCard('${cardId}')">
           <div class="analysis-header-left">
             <ion-icon name="trending-up"></ion-icon>
-            <h4>Prediksi Penggunaan Bulanan</h4>
+            <h4>Monthly Consumption Prediction</h4>
           </div>
           <ion-icon name="chevron-down" class="analysis-toggle" id="${cardId}-toggle"></ion-icon>
         </div>
         <div class="analysis-content" id="${cardId}-content">
           <div class="analysis-item">
-            <span class="analysis-label">Konsumsi Harian:</span>
+            <span class="analysis-label">Daily Consumption:</span>
             <span class="analysis-value">${prediction.dailyWh} Wh</span>
           </div>
           <div class="analysis-item">
-            <span class="analysis-label">Konsumsi Bulanan:</span>
+            <span class="analysis-label">Monthly Consumption:</span>
             <span class="analysis-value">${prediction.monthlyKWh} kWh</span>
           </div>
           <p style="margin-top: 10px; font-size: 0.85rem; color: var(--text-light); font-style: italic;">
-            *Berdasarkan penggunaan 8 jam/hari selama 30 hari
+            *Based on 8 hours/day for 30 days
           </p>
         </div>
       </div>
@@ -209,23 +209,23 @@ function createAnalysisCard(type) {
         <div class="analysis-header" onclick="toggleAnalysisCard('${cardId}')">
           <div class="analysis-header-left">
             <ion-icon name="cash"></ion-icon>
-            <h4>Estimasi Biaya Listrik</h4>
+            <h4>Estimated Monthly Cost</h4>
           </div>
           <ion-icon name="chevron-down" class="analysis-toggle" id="${cardId}-toggle"></ion-icon>
         </div>
         <div class="analysis-content" id="${cardId}-content">
           <div class="analysis-item">
-            <span class="analysis-label">Tarif per kWh:</span>
+            <span class="analysis-label">Tariff per kWh:</span>
             <span class="analysis-value">Rp ${TARIF_PER_KWH.toLocaleString('id-ID')}</span>
           </div>
           <div class="analysis-item">
-            <span class="analysis-label">Estimasi Biaya Bulanan:</span>
+            <span class="analysis-label">Estimated Monthly Cost:</span>
             <span class="analysis-value ${parseFloat(prediction.monthlyCost) > 200000 ? 'danger' : parseFloat(prediction.monthlyCost) > 100000 ? 'warning' : 'success'}">
               Rp ${parseFloat(prediction.monthlyCost).toLocaleString('id-ID')}
             </span>
           </div>
           <p style="margin-top: 10px; font-size: 0.85rem; color: var(--text-light); font-style: italic;">
-            *Tarif PLN untuk rumah tangga 900VA (R1/900VA)
+            *PLN tariff for household 900VA (R1/900VA)
           </p>
         </div>
       </div>
@@ -236,55 +236,55 @@ function createAnalysisCard(type) {
 }
 
 /**
- * Menghasilkan respons dari AI berdasarkan pesan pengguna
+ * Generate AI response based on user message
  */
 async function generateAIResponse(message) {
   const systemContext = `
-Anda adalah asisten AI bernama **Hydrovoltiger**, dirancang untuk membantu pemantauan dan analisis. 
-Anda memonitor parameter teknis seperti:
-- **mA (arus)**
-- **mW (daya output)**
-- **RPM (kecepatan turbin)**
-- **Volt (tegangan)**
-- **mWh (total energi yang dihasilkan)**
+You are an AI assistant named **Hydrovoltiger**, designed to help with monitoring and analysis. 
+You monitor technical parameters such as:
+- **mA (current)**
+- **mW (power output)**
+- **RPM (turbine speed)**
+- **Volt (voltage)**
+- **mWh (total energy generated)**
 
-Data saat ini:
-- Tegangan: ${currentData.voltage.toFixed(2)} V
-- Arus: ${currentData.current.toFixed(2)} mA
-- Daya: ${currentData.power.toFixed(2)} mW
+Current data:
+- Voltage: ${currentData.voltage.toFixed(2)} V
+- Current: ${currentData.current.toFixed(2)} mA
+- Power: ${currentData.power.toFixed(2)} mW
 - RPM: ${currentData.rpm.toFixed(2)}
-- Total Energi: ${currentData.totalEnergy.toFixed(4)} mWh
+- Total Energy: ${currentData.totalEnergy.toFixed(4)} mWh
 
-Tugas utama Anda:
-- Memberikan penjelasan teknis yang mudah dipahami.
-- Memberikan analisis performa kondisi real-time.
-- Memberikan saran preventif atau perawatan jika diperlukan (maintenance insight).
-- Menjawab pertanyaan pengguna dengan informasi yang akurat, ramah, dan profesional.
+Your main task:
+- Provide technical explanations that are easy to understand.
+- Provide real-time performance analysis.
+- Provide preventive maintenance insights if necessary.
+- Answer user questions with accurate, friendly, and professional information.
 
-Format jawaban **HARUS menggunakan MARKDOWN** agar rapi dan mudah dibaca.
+Format your response using **MARKDOWN** to make it neat and easy to read.
 
-Gunakan elemen berikut:
-- **Bold** untuk highlight.
-- *Italic* untuk istilah teknis.
-- Bullet list untuk informasi penting.
-- Heading (##) untuk judul analisis atau penjelasan.
+Use the following elements:
+- **Bold** for highlights.
+- *Italic* for technical terms.
+- Bullet lists for important information.
+- Headings (##) for analysis or explanation titles.
 
-Contoh Format Output:
-## Status Sistem Saat Ini
-- **Arus:** 124 mA → *Stabil*
-- **Tegangan:** 220V → *Di dalam rentang aman*
-- **RPM Turbin:** 780 RPM → *Sedikit rendah, periksa aliran air*
+Example output format:
+## Current System Status
+- **Current:** 124 mA → *Stable*
+- **Voltage:** 220V → *Within safe range*
+- **Turbine RPM:** 780 RPM → *Slightly low, check water flow*
 
-### Rekomendasi
-- Bersihkan saringan air untuk meningkatkan RPM.
-- Pantau tegangan dalam 10 menit ke depan.
+### Recommendations
+- Clean the water filter to increase RPM.
+- Monitor voltage in the next 10 minutes.
 
-PENTING: Jangan pernah gunakan format card atau kotak dalam respons Anda. Berikan jawaban dalam format text biasa dengan markdown.
+IMPORTANT: Never use card or box formats in your response. Provide answers in plain text with markdown.
 
-Jika pengguna mengirim pesan yang tidak terkait monitoring, jawab dengan ramah namun tetap relevan dengan konteks sistem Anda.
+If the user sends a message unrelated to monitoring, respond in a friendly but relevant manner to the system context.
 `; 
 
-  const prompt = `${systemContext}\n\nPertanyaan Pengguna: ${message}`;
+  const prompt = `${systemContext}\n\nUser Question: ${message}`;
 
   try {
     const response = await fetch("https://hydrovoltiger-production.up.railway.app/api/ai", {
@@ -294,24 +294,29 @@ Jika pengguna mengirim pesan yang tidak terkait monitoring, jawab dengan ramah n
     });
 
     if (!response.ok) {
-      return `**Error**: Gagal menghubungi backend AI (status ${response.status}).`;
+      if (response.status === 429) {
+        return "⚠️ **Warning**: AI quota is currently full. Please try again later or contact the administrator.";
+      } else if (response.status === 502) {
+        return "⚠️ **Warning**: AI server is currently experiencing issues. Please try again later.";
+      }
+      return `**Error**: Failed to connect to AI backend (code: ${response.status}).`;
     }
 
     const data = await response.json();
-    return data.text || "Tidak ada respons dari AI.";
+    return data.text || "No response from AI.";
   } catch (error) {
     console.error("AI Response Error:", error);
-    return `**Error**: Terjadi kesalahan jaringan saat menghubungi Backend AI.`;
+    return `**Error**: Network error occurred while connecting to AI backend.`;
   }
 }
 
 /**
- * Menambahkan pesan ke dalam kotak chat
+ * Add user message to chat
  */
 function appendMessage(sender, text, avatar, includeAnalysis = false, analysisType = null) {
   const chatMessages = document.getElementById("chatMessages");
   if (!chatMessages) {
-    console.error("Element chatMessages tidak ditemukan");
+    console.error("Element chatMessages not found");
     return;
   }
 
@@ -336,15 +341,15 @@ function appendMessage(sender, text, avatar, includeAnalysis = false, analysisTy
 }
 
 /**
- * Menginisialisasi AI Assistant
+ * Initialize AI Assistant
  */
 export function initAiAssistant(userAvatarInitial = "👤") {
   console.log("🚀 Initializing AI Assistant...");
   
-  // Mulai listen data realtime
+  // Start listening to real-time data
   listenToRealtimeData();
 
-  // Setup event listeners untuk buka/tutup AI sidebar
+  // Setup event listeners for opening/closing AI sidebar
   const openAiButton = document.getElementById("openAiAssistantButton");
   const closeAiButton = document.getElementById("closeAiAssistantButton");
   const aiBackdrop = document.getElementById("aiBackdrop");
@@ -363,7 +368,7 @@ export function initAiAssistant(userAvatarInitial = "👤") {
       openChat();
     });
   } else {
-    console.error("❌ Button openAiAssistantButton tidak ditemukan");
+    console.error("❌ Button openAiAssistantButton not found");
   }
   
   if (closeAiButton) {
@@ -388,7 +393,7 @@ export function initAiAssistant(userAvatarInitial = "👤") {
   const sendBtn = document.getElementById("sendAiMessageButton");
 
   if (!chatInput || !sendBtn) {
-    console.error("❌ Elemen chat input atau send button tidak ditemukan");
+    console.error("❌ Chat input or send button elements not found");
     return;
   }
 

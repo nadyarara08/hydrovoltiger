@@ -13,21 +13,21 @@ document.querySelectorAll(".nav-item, .mobile-nav-item").forEach(item => {
 // ==================== GEOLOCATION FUNCTION ====================
 function requestUserLocation(user) {
   if (!navigator.geolocation) {
-    console.warn("Geolocation tidak didukung oleh browser ini.");
+    console.warn("Geolocation is not supported by this browser.");
     return;
   }
 
-  // Cek apakah user sudah memberikan lokasi sebelumnya
+  // Check if user has provided location before
   const userDeviceRef = ref(db, `Devices/user_${user.uid}`);
   
   onValue(userDeviceRef, (snapshot) => {
     if (!snapshot.exists() || !snapshot.val().lat || !snapshot.val().lng) {
-      // Jika belum ada data lokasi, minta izin
+      // If no location data exists, request permission
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
           
-          // Simpan data lokasi user ke Firebase
+          // Save user location data to Firebase
           const userDeviceData = {
             name: user.displayName || user.email.split("@")[0],
             email: user.email,
@@ -35,7 +35,7 @@ function requestUserLocation(user) {
             lng: longitude,
             location: `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`,
             status: "online",
-            lastUpdate: new Date().toLocaleString("id-ID", {
+            lastUpdate: new Date().toLocaleString("en-US", {
               dateStyle: "medium",
               timeStyle: "short"
             }),
@@ -45,24 +45,24 @@ function requestUserLocation(user) {
 
           set(userDeviceRef, userDeviceData)
             .then(() => {
-              console.log("✅ Lokasi user berhasil disimpan ke Firebase");
+              console.log("✅ User location saved to Firebase");
             })
             .catch((error) => {
-              console.error("❌ Error menyimpan lokasi:", error);
+              console.error('❌ Failed to update device status:', error);
             });
         },
         (error) => {
-          console.warn("⚠️ User menolak akses lokasi atau terjadi error:", error.message);
+          console.warn("⚠️ User denied location access or an error occurred:", error.message);
           
-          // Simpan device tanpa lokasi
+          // Save device without location
           const userDeviceData = {
             name: user.displayName || user.email.split("@")[0],
             email: user.email,
             lat: null,
             lng: null,
-            location: "Lokasi tidak tersedia",
+            location: "Location not available",
             status: "online",
-            lastUpdate: new Date().toLocaleString("id-ID", {
+            lastUpdate: new Date().toLocaleString("en-US", {
               dateStyle: "medium",
               timeStyle: "short"
             }),
@@ -71,7 +71,7 @@ function requestUserLocation(user) {
           };
 
           set(userDeviceRef, userDeviceData)
-            .catch((err) => console.error("❌ Error menyimpan device:", err));
+            .catch((err) => console.error("❌ Error saving device:", err));
         },
         {
           enableHighAccuracy: true,
@@ -80,16 +80,16 @@ function requestUserLocation(user) {
         }
       );
     } else {
-      // Jika sudah ada lokasi, update status dan lastUpdate saja
+      // If location exists, only update status and lastUpdate
       update(userDeviceRef, {
         status: "online",
-        lastUpdate: new Date().toLocaleString("id-ID", {
+        lastUpdate: new Date().toLocaleString("en-US", {
           dateStyle: "medium",
           timeStyle: "short"
         })
       });
     }
-  }, { onlyOnce: true }); // onlyOnce agar tidak loop
+  }, { onlyOnce: true }); // onlyOnce to prevent loop
 }
 
 // ==================== UPDATE LOCATION PERIODICALLY ====================
@@ -107,14 +107,14 @@ function startLocationTracking(user) {
             lng: longitude,
             location: `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`,
             status: "online",
-            lastUpdate: new Date().toLocaleString("id-ID", {
+            lastUpdate: new Date().toLocaleString("en-US", {
               dateStyle: "medium",
               timeStyle: "short"
             })
           });
         },
         (error) => {
-          console.warn("⚠️ Tidak dapat memperbarui lokasi:", error.message);
+          console.warn("⚠️ Failed to update location:", error.message);
         },
         {
           enableHighAccuracy: false,
@@ -123,7 +123,7 @@ function startLocationTracking(user) {
         }
       );
     }
-  }, 300000); // 5 menit
+  }, 300000); // 5 minutes
 }
 
 // ==================== SET USER OFFLINE ON LEAVE ====================
@@ -131,7 +131,7 @@ function setUserOffline(userId) {
   const userDeviceRef = ref(db, `Devices/user_${userId}`);
   update(userDeviceRef, {
     status: "offline",
-    lastUpdate: new Date().toLocaleString("id-ID", {
+    lastUpdate: new Date().toLocaleString("en-US", {
       dateStyle: "medium",
       timeStyle: "short"
     })
@@ -190,8 +190,8 @@ document.addEventListener("click", (e) => {
   }
 });
 
-// LOGOUT
-document.getElementById("logoutButton").addEventListener("click", () => {
+// LOGOUT FUNCTION - Now handled in Profile.js
+const handleLogout = () => {
   const user = auth.currentUser;
   if (user) {
     setUserOffline(user.uid);
@@ -200,7 +200,10 @@ document.getElementById("logoutButton").addEventListener("click", () => {
   signOut(auth).then(() => {
     window.location.href = "../login/login.html";
   });
-});
+};
+
+// Desktop logout button (in sidebar dropdown)
+document.getElementById("logoutButton")?.addEventListener("click", handleLogout);
 
 // ==================== MAP INIT ====================
 const map = L.map("deviceMap").setView([-2.5, 118], 5);
@@ -216,10 +219,10 @@ const legend = L.control({ position: 'bottomright' });
 legend.onAdd = function(map) {
   const div = L.DomUtil.create('div', 'map-legend');
   div.innerHTML = `
-    <h4>Legenda</h4>
+    <h4>Legend</h4>
     <div class="legend-item">
       <div class="legend-dot" style="background: #fbbf24;"></div>
-      <span>Lokasi Anda</span>
+      <span>Your Location</span>
     </div>
     <div class="legend-item">
       <div class="legend-dot" style="background: #38a169;"></div>
@@ -248,7 +251,7 @@ onValue(deviceRef, snapshot => {
   deviceListEl.innerHTML = "";
 
   if (!snapshot.exists()) {
-    deviceListEl.innerHTML = "<p style='text-align:center; padding:20px; color:#5a7882;'>Tidak ada device terdaftar.</p>";
+    deviceListEl.innerHTML = "<p style='text-align:center; padding:20px; color:#5a7882;'>No registered devices.</p>";
     return;
   }
 
@@ -293,7 +296,7 @@ onValue(deviceRef, snapshot => {
           </div>
           ` : ''}
           <div class="info-item">
-            <span>Lokasi:</span>
+            <span>Location:</span>
             <strong>${d.location || "-"}</strong>
           </div>
           <div class="info-item">
@@ -302,7 +305,7 @@ onValue(deviceRef, snapshot => {
           </div>
         </div>
 
-        <button class="btn-detail" onclick="alert('Detail device: ${d.name}\\nStatus: ${isOnline ? 'Online' : 'Offline'}\\nLokasi: ${d.location || '-'}')">Lihat Detail</button>
+        <button class="btn-detail" onclick="alert('Detail device: ${d.name}\\nStatus: ${isOnline ? 'Online' : 'Offline'}\\nLocation: ${d.location || '-'}')">View Details</button>
       </div>
     `;
 
@@ -342,7 +345,7 @@ onValue(deviceRef, snapshot => {
             .bindPopup(`
               <div style="text-align:center; min-width: 150px;">
                 <b>${d.name || "Device"}</b><br>
-                ${isCurrentUser ? '<small style="color: #fbbf24; font-weight: 600;">🟡 Lokasi Anda</small><br>' : ''}
+                ${isCurrentUser ? '<small style="color: #fbbf24; font-weight: 600;">🟡 Your Location</small><br>' : ''}
                 <small style="color: #64748b;">${deviceTypeLabel}</small><br>
                 <small>ID: ${id}</small><br>
                 ${d.email ? `<small>📧 ${d.email}</small><br>` : ''}
@@ -366,7 +369,7 @@ onValue(deviceRef, snapshot => {
           deviceMarkers[id].setPopupContent(`
             <div style="text-align:center; min-width: 150px;">
               <b>${d.name || "Device"}</b><br>
-              ${isCurrentUser ? '<small style="color: #fbbf24; font-weight: 600;">🟡 Lokasi Anda</small><br>' : ''}
+              ${isCurrentUser ? '<small style="color: #fbbf24; font-weight: 600;">🟡 Your Location</small><br>' : ''}
               <small style="color: #64748b;">${deviceTypeLabel}</small><br>
               <small>ID: ${id}</small><br>
               ${d.email ? `<small>📧 ${d.email}</small><br>` : ''}
@@ -391,10 +394,10 @@ onValue(deviceRef, snapshot => {
 }, error => {
   console.error("❌ Error loading devices:", error);
   
-  let errorMessage = "Error loading devices.";
+  let errorMessage = 'Failed to load device data.';
   
   if (error.code === "PERMISSION_DENIED") {
-    errorMessage = "❌ Permission Denied: Silakan cek Firebase Realtime Database Rules.\n\nBuka Firebase Console → Realtime Database → Rules, lalu set:\n\n{\n  \"rules\": {\n    \".read\": \"auth != null\",\n    \".write\": \"auth != null\"\n  }\n}";
+    errorMessage = "❌ Permission Denied: Please check Firebase Realtime Database Rules.\n\nOpen Firebase Console → Realtime Database → Rules, then set:\n\n{\n  \"rules\": {\n    \".read\": \"auth != null\",\n    \".write\": \"auth != null\"\n  }\n}";
   }
   
   deviceListEl.innerHTML = `

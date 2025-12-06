@@ -40,13 +40,13 @@ function formatDate(timestamp) {
   if (!timestamp) return "-";
   const date = new Date(timestamp);
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  return date.toLocaleDateString('id-ID', options);
+  return date.toLocaleDateString('en-US', options);
 }
 
 // === TAMPILKAN DATA USER ===
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    const name = user.displayName || "Pengguna";
+    const name = user.displayName || "User";
     const email = user.email;
     const initial = name.charAt(0).toUpperCase();
     const color = getColorFromName(name);
@@ -93,17 +93,21 @@ document.addEventListener("click", (e) => {
 });
 
 // === LOGOUT FUNCTIONALITY ===
-logoutButton?.addEventListener("click", async () => {
-  const confirm = window.confirm("Apakah Anda yakin ingin keluar?");
+const handleLogout = async () => {
+  const confirm = window.confirm("Are you sure you want to logout?");
   if (!confirm) return;
 
   try {
     await signOut(auth);
-    window.location.href = "../register/register.html";
+    window.location.href = "../login/login.html";
   } catch (error) {
-    alert("Gagal logout: " + error.message);
+    showToast("Failed to logout: " + error.message);
   }
-});
+};
+
+// Add event listeners for both logout buttons
+logoutButton?.addEventListener("click", handleLogout);
+document.getElementById("logoutProfileBtn")?.addEventListener("click", handleLogout);
 
 // === NOTIFICATION TOGGLE ===
 notificationToggle?.addEventListener("change", (e) => {
@@ -112,7 +116,7 @@ notificationToggle?.addEventListener("change", (e) => {
   localStorage.setItem("notificationsEnabled", enabled);
   
   // Show toast notification
-  showToast(enabled ? "Notifikasi diaktifkan" : "Notifikasi dinonaktifkan");
+  showToast(enabled ? "Notifications enabled" : "Notifications disabled");
 });
 
 // Load notification preference
@@ -123,28 +127,28 @@ if (notifPref !== null) {
 
 // === SECURITY BUTTON ===
 securityBtn?.addEventListener("click", () => {
-  showToast("Fitur keamanan akan segera hadir!");
+  showToast("Security feature coming soon!");
 });
 
-// === HAPUS AKUN ===
+// === DELETE ACCOUNT ===
 deleteAccountBtn?.addEventListener("click", async () => {
   const user = auth.currentUser;
   if (!user) return;
 
-  const yakin = confirm(
-    "⚠️ PERINGATAN: Tindakan ini akan menghapus akun Anda secara permanen!\n\n" +
-    "Semua data Anda akan hilang dan tidak dapat dipulihkan.\n\n" +
-    "Apakah Anda yakin ingin melanjutkan?"
+  const userConfirmed = window.confirm(
+    "⚠️ WARNING: This action will permanently delete your account!\n\n" +
+    "All your data will be lost and cannot be recovered.\n\n" +
+    "Are you sure you want to proceed?"
   );
   
-  if (!yakin) return;
+  if (!userConfirmed) return;
 
   const confirmText = prompt(
-    'Ketik "HAPUS AKUN SAYA" (tanpa tanda kutip) untuk mengkonfirmasi:'
+    'Type "DELETE MY ACCOUNT" (without quotes) to confirm:'
   );
   
-  if (confirmText !== "HAPUS AKUN SAYA") {
-    alert("Konfirmasi tidak sesuai. Penghapusan akun dibatalkan.");
+  if (confirmText !== "DELETE MY ACCOUNT") {
+    alert("Confirmation does not match. Account deletion cancelled.");
     return;
   }
 
@@ -155,9 +159,9 @@ deleteAccountBtn?.addEventListener("click", async () => {
       const provider = new GoogleAuthProvider();
       await reauthenticateWithPopup(user, provider);
     } else {
-      const password = prompt("Masukkan password Anda untuk konfirmasi akhir:");
+      const password = prompt("Enter your password for final confirmation:");
       if (!password) {
-        alert("Password diperlukan untuk menghapus akun.");
+        alert("Password required to delete account.");
         return;
       }
       const credential = EmailAuthProvider.credential(user.email, password);
@@ -165,12 +169,12 @@ deleteAccountBtn?.addEventListener("click", async () => {
     }
 
     await deleteUser(user);
-    alert("Akun Anda telah berhasil dihapus!");
+    showToast("Account successfully deleted");
     window.location.href = "../register/register.html";
 
   } catch (err) {
     console.error("Error deleting account:", err);
-    alert("Gagal menghapus akun: " + err.message);
+    showToast("Failed to delete account: " + err.message);
   }
 });
 

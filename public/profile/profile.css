@@ -645,6 +645,36 @@ input:checked + .slider:before {
     margin: 0 0 15px 0;
 }
 
+.btn-logout {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 20px;
+    background: white;
+    color: #123440;
+    border: 2px solid #123440;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+    margin-bottom: 12px;
+}
+
+.btn-logout:hover {
+    background: #123440;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(18, 52, 64, 0.3);
+}
+
+.btn-logout ion-icon {
+    font-size: 20px;
+}
+
 .btn-danger {
     width: 100%;
     display: flex;

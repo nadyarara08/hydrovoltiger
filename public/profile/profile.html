@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -53,14 +53,9 @@
         </div>
 
         <div class="Profile-dropdown-nav" id="ProfileDropdownNav">
-          <div class="dropdown-item-nav">
-            <ion-icon name="settings-outline"></ion-icon>
-            <span>Pengaturan</span>
-          </div>
-          <div class="dropdown-divider-nav"></div>
           <div class="dropdown-item-nav logout" id="logoutButton">
             <ion-icon name="log-out-outline"></ion-icon>
-            <span>Keluar</span>
+            <span>Logout</span>
           </div>
         </div>
       </div>
@@ -95,8 +90,8 @@
       <div class="container">
         
         <div class="page-header">
-          <h1>Profile Pengguna</h1>
-          <p>Kelola informasi akun dan preferensi Anda</p>
+          <h1>User Profile</h1>
+          <p>Manage your account information and preferences</p>
         </div>
 
         <div class="Profile-grid">
@@ -114,15 +109,15 @@
               <div class="stat-item">
                 <ion-icon name="calendar-outline"></ion-icon>
                 <div class="stat-content">
-                  <span class="stat-label">Bergabung Sejak</span>
+                  <span class="stat-label">Joined Since</span>
                   <span class="stat-value" id="joinDate">-</span>
                 </div>
               </div>
               <div class="stat-item">
                 <ion-icon name="shield-checkmark-outline"></ion-icon>
                 <div class="stat-content">
-                  <span class="stat-label">Status Akun</span>
-                  <span class="stat-value">Terverifikasi</span>
+                  <span class="stat-label">Account Status</span>
+                  <span class="stat-value">Verified</span>
                 </div>
               </div>
             </div>
@@ -130,15 +125,15 @@
 
           <!-- Actions Card -->
           <div class="actions-card">
-            <h3>Pengaturan Akun</h3>
+            <h3>Account Settings</h3>
             
             <div class="action-item">
               <div class="action-icon">
                 <ion-icon name="notifications-outline"></ion-icon>
               </div>
               <div class="action-content">
-                <h4>Notifikasi</h4>
-                <p>Kelola preferensi notifikasi Anda</p>
+                <h4>Notifications</h4>
+                <p>Manage your notification preferences</p>
               </div>
               <div class="action-toggle">
                 <label class="switch">
@@ -153,8 +148,8 @@
                 <ion-icon name="key-outline"></ion-icon>
               </div>
               <div class="action-content">
-                <h4>Keamanan</h4>
-                <p>Ubah password dan pengaturan keamanan</p>
+                <h4>Security</h4>
+                <p>Change your password and security settings</p>
               </div>
               <button class="action-btn" id="securityBtn">
                 <ion-icon name="chevron-forward-outline"></ion-icon>
@@ -164,11 +159,15 @@
             <div class="action-divider"></div>
 
             <div class="danger-zone">
-              <h3>Zona Berbahaya</h3>
-              <p>Tindakan ini tidak dapat dibatalkan</p>
+              <h3>Danger Zone</h3>
+              <p>These actions cannot be undone</p>
+              <button class="btn-logout" id="logoutProfileBtn">
+                <ion-icon name="log-out-outline"></ion-icon>
+                <span>Logout</span>
+              </button>
               <button class="btn-danger" id="deleteAccountBtn">
                 <ion-icon name="trash-outline"></ion-icon>
-                <span>Hapus Akun Permanen</span>
+                <span>Delete Account Permanently</span>
               </button>
             </div>
           </div>
