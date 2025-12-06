@@ -202,7 +202,7 @@ body::before {
     transform: rotate(180deg);
 }
 
-.profile-dropdown-nav {
+.Profile-dropdown-nav {
     position: absolute;
     bottom: calc(100% + 10px);
     left: 15px;
@@ -217,7 +217,7 @@ body::before {
     animation: dropdownSlideUp 0.2s ease;
 }
 
-.profile-dropdown-nav.show {
+.Profile-dropdown-nav.show {
     display: block;
 }
 

@@ -25,11 +25,11 @@
       <div class="nav-menu">
           <a href="../main.html" class="nav-item">
               <ion-icon name="home-outline"></ion-icon>
-              <span>Beranda</span>
+              <span>Home</span>
           </a>
           <a href="../analytics/analytics.html" class="nav-item">
               <ion-icon name="analytics-outline"></ion-icon>
-              <span>Analitik</span>
+              <span>Analytics</span>
           </a>
           <a href="news.html" class="nav-item active">
               <ion-icon name="newspaper-outline"></ion-icon>
@@ -39,9 +39,9 @@
               <ion-icon name="hardware-chip-outline"></ion-icon>
               <span>Device</span>
           </a>
-          <a href="../profile/profile.html" class="nav-item">
+          <a href="../Profile/Profile.html" class="nav-item">
               <ion-icon name="person-outline"></ion-icon>
-              <span>Profil</span>
+              <span>Profile</span>
           </a>
       </div>
 
@@ -58,17 +58,17 @@
           <ion-icon name="chevron-down-outline" class="dropdown-icon-nav"></ion-icon>
         </div>
 
-        <div class="profile-dropdown-nav" id="profileDropdownNav">
+        <div class="Profile-dropdown-nav" id="ProfileDropdownNav">
           <div class="dropdown-item-nav">
             <ion-icon name="settings-outline"></ion-icon>
-            <span>Pengaturan</span>
+            <span>Setting</span>
           </div>
 
           <div class="dropdown-divider-nav"></div>
 
           <div class="dropdown-item-nav logout" id="logoutButton">
             <ion-icon name="log-out-outline"></ion-icon>
-            <span>Keluar</span>
+            <span>Log Out</span>
           </div>
         </div>
       </div>
@@ -78,11 +78,11 @@
         <nav class="mobile-nav">
             <a href="../main.html" class="mobile-nav-item active">
                 <ion-icon name="home-outline"></ion-icon>
-                <span>Beranda</span>
+                <span>Home</span>
             </a>
             <a href="../analytics/analytics.html" class="mobile-nav-item">
                     <ion-icon name="analytics-outline"></ion-icon>
-                    <span>Analitik</span>
+                    <span>Analytics</span>
             </a>
             <a href="news.html" class="mobile-nav-item">
                 <ion-icon name="newspaper-outline"></ion-icon>
@@ -92,9 +92,9 @@
                 <ion-icon name="hardware-chip-outline"></ion-icon>
                 <span>Device</span>
             </a>
-            <a href="../profile/profile.html" class="mobile-nav-item">
+            <a href="../Profile/Profile.html" class="mobile-nav-item">
                 <ion-icon name="person-outline"></ion-icon>
-                <span>Profil</span>
+                <span>Profile</span>
             </a>
         </nav>
 
@@ -103,8 +103,18 @@
       <div class="container">
 
         <div class="page-header">
-          <h1>Berita & Artikel</h1>
-          <p>Update terbaru seputar energi terbarukan, monitoring IoT, dan teknologi Hydrovoltiger</p>
+          <div class="header-actions">
+            <div>
+              <h1>News & Articles</h1>
+              <p>Latest updates on renewable energy, IoT monitoring, and Hydrovoltiger technology</p>
+            </div>
+            
+            <!-- Admin Button - Hanya tampil untuk admin -->
+            <a href="news-admin.html" class="btn-admin" id="adminButton" style="display: none;">
+              <ion-icon name="shield-checkmark-outline"></ion-icon>
+              <span>Manage News</span>
+            </a>
+          </div>
         </div>
 
         <!-- DINAMIS DARI FIREBASE -->

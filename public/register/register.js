@@ -135,7 +135,7 @@ registerForm.addEventListener('submit', async (e) => {
     // Create user with email and password
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     
-    // Update user profile with name
+    // Update user Profile with name
     await updateProfile(userCredential.user, {
       displayName: name
     });

@@ -24,17 +24,40 @@ onAuthStateChanged(auth, (user) => {
 
 // ============== DROPDOWN TOGGLE ==============
 document.getElementById("userInfoButton").addEventListener("click", () => {
-  const dropdown = document.getElementById("profileDropdownNav");
+  const dropdown = document.getElementById("ProfileDropdownNav");
   dropdown.classList.toggle("show");
 });
 
 // Close dropdown when clicking outside
 document.addEventListener("click", (e) => {
   const userInfo = document.getElementById("userInfoButton");
-  const dropdown = document.getElementById("profileDropdownNav");
+  const dropdown = document.getElementById("ProfileDropdownNav");
   
   if (!userInfo.contains(e.target) && !dropdown.contains(e.target)) {
     dropdown.classList.remove("show");
+  }
+});
+
+const ADMIN_EMAILS = [
+  'wishnuhydrovoltiger@gmail.com',
+  'rarakirani08@gmail.com',
+  // Tambahkan email admin di sini
+];
+
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    window.location.href = "../login/login.html";
+    return;
+  }
+
+  const name = user.displayName || user.email.split("@")[0];
+  document.getElementById("userNameNav").textContent = name;
+  document.getElementById("userAvatarNav").textContent = name.charAt(0).toUpperCase();
+  
+  // Show admin button if user is admin
+  const adminButton = document.getElementById("adminButton");
+  if (adminButton && ADMIN_EMAILS.includes(user.email)) {
+    adminButton.style.display = "inline-flex";
   }
 });
 
@@ -125,7 +148,7 @@ onValue(newsRef, snapshot => {
           <h3>${n.title || 'Judul Tidak Tersedia'}</h3>
           <p>${contentPreview}</p>
 
-          <a href="#" class="read-more" onclick="alert('Fitur detail berita akan segera hadir!\\n\\nJudul: ${(n.title || '').replace(/'/g, "\\'")}'); return false;">
+          <a href="news-detail.html?id=${n.id}" class="read-more">
             Baca Selengkapnya →
           </a>
         </div>

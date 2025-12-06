@@ -4,7 +4,12 @@ import { auth } from "./auth/firebase-init.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import { initAiAssistant } from "./ai_assistant/ai.js";
 
-// === Saat halaman siap ===
+// 🧪 TESTING MODE - Set false untuk production
+const TESTING_MODE = false; // ← UBAH KE false NANTI UNTUK PRODUCTION
+const SAVE_INTERVAL = TESTING_MODE ? 60000 : 3600000; // 1 menit vs 1 jam
+
+console.log(`🧪 Mode: ${TESTING_MODE ? 'TESTING (1 menit)' : 'PRODUCTION (1 jam)'}`);
+
 document.addEventListener("DOMContentLoaded", () => {
   console.log("🚀 Page loaded, initializing...");
   
@@ -14,12 +19,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // ======== CONNECTION INDICATOR ========
   const indicator = document.getElementById("connectionIndicator");
   const indicatorText = document.getElementById("indicatorText");
-  const indicatorDot = document.getElementById("indicatorDot");
 
   const connectionRef = ref(db, ".info/connected");
   onValue(connectionRef, (snapshot) => {
     const connected = snapshot.val();
-    console.log("🔌 Firebase Connection Status:", connected ? "ONLINE ✅" : "OFFLINE ❌");
+    console.log("🔌 Firebase:", connected ? "ONLINE ✅" : "OFFLINE ❌");
     
     if (connected) {
       indicator.classList.add("online");
@@ -32,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // === LOGIN CHECK ===
+  // ======== LOGIN CHECK ========
   onAuthStateChanged(auth, (user) => {
     if (user) {
       console.log("✅ User logged in:", user.email);
@@ -42,266 +46,313 @@ document.addEventListener("DOMContentLoaded", () => {
       if (userAvatarNav) userAvatarNav.textContent = initial;
       if (userNameNav) userNameNav.textContent = name;
 
-      // Tunggu sebentar untuk memastikan DOM siap
       setTimeout(() => {
-        startDashboard(); // Mulai logika dasbor
-        initAiAssistant(initial); // Mulai logika AI Assistant
+        startDashboard();
+        initAiAssistant(initial);
       }, 500);
     } else {
-      console.log("❌ No user logged in, redirecting to login...");
+      console.log("❌ No user, redirecting to login...");
       window.location.href = "./login/login.html";
     }
   });
 
-  // === LOGIKA DASHBOARD ===
+  // ======== DASHBOARD LOGIC ========
   function startDashboard() {
     console.log("📊 Starting Dashboard...");
-    
-    // Cek apakah semua elemen DOM ada
-    const requiredElements = ['voltage', 'current', 'power', 'rpm', 'totalPower', 'duration', 'efficiency', 'realtimeChart', 'dataTableBody'];
-    const missingElements = requiredElements.filter(id => !document.getElementById(id));
-    
-    if (missingElements.length > 0) {
-      console.error("❌ Missing DOM elements:", missingElements);
-      return;
-    }
-    
-    console.log("✅ All DOM elements found");
     
     let realtimeData = { labels: [], voltage: [], current: [], power: [], rpm: [] };
     let dailyData = { labels: [], voltage: [], current: [], power: [], rpm: [], timestamps: [] };
     let weeklyData = { labels: [], voltage: [], current: [], power: [], rpm: [], timestamps: [] };
     let monthlyData = { labels: [], voltage: [], current: [], power: [], rpm: [], timestamps: [] };
     let turbineStartTime = null;
-    let lastProcessedDay = null;
-    let lastProcessedWeek = null;
-    let lastProcessedMonth = null;
+    
+    let lastSaveTime = null;
+    let currentIntervalData = {
+      voltage: [],
+      current: [],
+      power: [],
+      rpm: [],
+      count: 0
+    };
 
-    // Fungsi untuk mendapatkan timestamp awal hari ini
-    function getStartOfDay(date) {
+    // ======== HELPER FUNCTIONS ========
+    function getStartOfInterval(date) {
       const d = new Date(date);
-      d.setHours(0, 0, 0, 0);
+      if (TESTING_MODE) {
+        d.setSeconds(0, 0); // Round ke menit
+      } else {
+        d.setMinutes(0, 0, 0); // Round ke jam
+      }
       return d.getTime();
     }
 
-    // Fungsi untuk memeriksa apakah dua tanggal berbeda hari
-    function isDifferentDay(date1, date2) {
-      return date1.getDate() !== date2.getDate() ||
-             date1.getMonth() !== date2.getMonth() ||
-             date1.getFullYear() !== date2.getFullYear();
-    }
-
-    // Fungsi untuk memeriksa apakah dua tanggal berbeda minggu
-    function isDifferentWeek(date1, date2) {
-      const d1 = new Date(date1);
-      const d2 = new Date(date2);
-      const diffTime = Math.abs(d2 - d1);
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      return diffDays >= 7;
-    }
-
-    // Fungsi untuk memeriksa apakah dua tanggal berbeda bulan
-    function isDifferentMonth(date1, date2) {
-      return date1.getMonth() !== date2.getMonth() ||
-             date1.getFullYear() !== date2.getFullYear();
-    }
-
-    // Fungsi untuk memproses data harian
-    function processDailyData(currentData) {
-      const now = new Date();
-      const today = now.toISOString().split('T')[0];
-      const todayStart = getStartOfDay(now);
+    function normalizeData(voltage, current, power, rpm) {
+      // Handle RPM yang terlalu besar (bug sensor)
+      if (rpm > 10000) {
+        console.warn(`⚠️ RPM too high (${rpm}), normalizing...`);
+        rpm = rpm / 100;
+      }
       
-      // Cari indeks data hari ini
-      const todayIndex = dailyData.timestamps.findIndex(ts => {
-        const date = new Date(ts);
-        return date.getDate() === now.getDate() && 
-               date.getMonth() === now.getMonth() && 
-               date.getFullYear() === now.getFullYear();
+      // Handle nilai negatif yang tidak wajar
+      if (voltage < 0) voltage = Math.abs(voltage);
+      if (rpm < 0) rpm = 0;
+      
+      return { voltage, current, power, rpm };
+    }
+
+    function showToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        position: fixed;
+        top: ${TESTING_MODE ? '120px' : '80px'};
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+        z-index: 10000;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        max-width: 300px;
+        font-size: 14px;
+      `;
+      
+      if (type === 'success') toast.style.background = '#10b981';
+      else if (type === 'error') toast.style.background = '#ef4444';
+      else toast.style.background = '#3b82f6';
+      
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // ======== SHOW TESTING BANNER ========
+    if (TESTING_MODE) {
+      const banner = document.createElement('div');
+      banner.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        color: #000;
+        padding: 12px 20px;
+        text-align: center;
+        font-weight: 600;
+        z-index: 10000;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      `;
+      banner.innerHTML = `
+        🧪 TESTING MODE - Snapshot setiap 1 MENIT (production: 1 jam)
+        <button onclick="this.parentElement.remove()" style="margin-left: 20px; padding: 5px 15px; cursor: pointer; border: none; border-radius: 4px; background: rgba(0,0,0,0.2); font-weight: 600;">✕</button>
+      `;
+      document.body.insertBefore(banner, document.body.firstChild);
+    }
+
+    // ======== SAVE PERIODIC SNAPSHOT ========
+    function savePeriodicSnapshot(data) {
+      const now = new Date();
+      const currentInterval = getStartOfInterval(now);
+      
+      currentIntervalData.voltage.push(data.voltage);
+      currentIntervalData.current.push(data.current);
+      currentIntervalData.power.push(data.power);
+      currentIntervalData.rpm.push(data.rpm);
+      currentIntervalData.count++;
+      
+      const timeUntilNext = SAVE_INTERVAL - (now.getTime() - currentInterval);
+      const secondsLeft = Math.floor(timeUntilNext / 1000);
+      
+      if (currentIntervalData.count % 5 === 0) {
+        console.log(`📊 ${currentIntervalData.count} data points | Next save: ${secondsLeft}s`);
+      }
+      
+      const shouldSave = !lastSaveTime || (currentInterval > lastSaveTime);
+      
+      if (shouldSave && currentIntervalData.count > 0) {
+        const avgVoltage = currentIntervalData.voltage.reduce((a, b) => a + b, 0) / currentIntervalData.count;
+        const avgCurrent = currentIntervalData.current.reduce((a, b) => a + b, 0) / currentIntervalData.count;
+        const avgPower = currentIntervalData.power.reduce((a, b) => a + b, 0) / currentIntervalData.count;
+        const avgRpm = currentIntervalData.rpm.reduce((a, b) => a + b, 0) / currentIntervalData.count;
+        
+        const saveTimestamp = lastSaveTime || currentInterval;
+        const historyRef = ref(db, `history/${saveTimestamp}`);
+        
+        console.log(`💾 Saving snapshot (${currentIntervalData.count} points averaged)`);
+        
+        set(historyRef, {
+          voltage: avgVoltage.toFixed(2),
+          current: avgCurrent.toFixed(2),
+          power: avgPower.toFixed(2),
+          rpm: avgRpm.toFixed(2),
+          timestamp: saveTimestamp
+        }).then(() => {
+          console.log(`✅ Snapshot saved at ${new Date(saveTimestamp).toLocaleString('id-ID')}`);
+          showToast(`💾 Data tersimpan (${currentIntervalData.count} points)`, 'success');
+          
+          currentIntervalData = {
+            voltage: [],
+            current: [],
+            power: [],
+            rpm: [],
+            count: 0
+          };
+          
+          lastSaveTime = currentInterval;
+          loadAndProcessHistory();
+        }).catch((error) => {
+          console.error("❌ Save error:", error);
+          showToast(`❌ Gagal menyimpan: ${error.message}`, 'error');
+        });
+      }
+    }
+
+    // ======== LOAD & PROCESS HISTORY ========
+    function loadAndProcessHistory() {
+      const historyRef = ref(db, "history");
+      
+      onValue(historyRef, (snapshot) => {
+        if (!snapshot.exists()) {
+          console.log("📚 No history data yet");
+          return;
+        }
+
+        const history = snapshot.val();
+        console.log(`📚 Loading ${Object.keys(history).length} snapshots...`);
+
+        dailyData = { labels: [], voltage: [], current: [], power: [], rpm: [], timestamps: [] };
+        weeklyData = { labels: [], voltage: [], current: [], power: [], rpm: [], timestamps: [] };
+        monthlyData = { labels: [], voltage: [], current: [], power: [], rpm: [], timestamps: [] };
+
+        const historyArray = Object.entries(history)
+          .map(([ts, data]) => ({
+            timestamp: parseInt(ts),
+            voltage: parseFloat(data.voltage),
+            current: parseFloat(data.current),
+            power: parseFloat(data.power),
+            rpm: parseFloat(data.rpm)
+          }))
+          .filter(item => {
+            // Filter data yang valid
+            const isValid = !isNaN(item.voltage) && !isNaN(item.current) && 
+                           !isNaN(item.power) && !isNaN(item.rpm);
+            if (!isValid) console.warn("⚠️ Skipping invalid data:", item);
+            return isValid;
+          })
+          .sort((a, b) => a.timestamp - b.timestamp);
+
+        console.log(`✅ ${historyArray.length} valid snapshots`);
+
+        // ===== DAILY (1 jam/24 jam terakhir) =====
+        const dailyPeriod = TESTING_MODE ? (60 * 60 * 1000) : (24 * 60 * 60 * 1000);
+        const dailyHistory = historyArray.filter(item => 
+          item.timestamp >= Date.now() - dailyPeriod
+        );
+        
+        (dailyHistory.length > 0 ? dailyHistory : historyArray.slice(-24)).forEach(item => {
+          const normalized = normalizeData(item.voltage, item.current, item.power, item.rpm);
+          const date = new Date(item.timestamp);
+          
+          dailyData.labels.push(date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }));
+          dailyData.voltage.push(normalized.voltage);
+          dailyData.current.push(normalized.current);
+          dailyData.power.push(normalized.power);
+          dailyData.rpm.push(normalized.rpm);
+          dailyData.timestamps.push(item.timestamp);
+        });
+
+        // ===== WEEKLY (3 jam/7 hari terakhir, group per 10min/1hari) =====
+        const weeklyPeriod = TESTING_MODE ? (3 * 60 * 60 * 1000) : (7 * 24 * 60 * 60 * 1000);
+        const weeklyHistory = historyArray.filter(item => 
+          item.timestamp >= Date.now() - weeklyPeriod
+        );
+        
+        const groupInterval = TESTING_MODE ? (10 * 60 * 1000) : (24 * 60 * 60 * 1000);
+        const weeklyGroups = {};
+        
+        (weeklyHistory.length > 0 ? weeklyHistory : historyArray).forEach(item => {
+          const normalized = normalizeData(item.voltage, item.current, item.power, item.rpm);
+          const groupKey = Math.floor(item.timestamp / groupInterval) * groupInterval;
+          
+          if (!weeklyGroups[groupKey]) {
+            weeklyGroups[groupKey] = { voltage: [], current: [], power: [], rpm: [] };
+          }
+          
+          weeklyGroups[groupKey].voltage.push(normalized.voltage);
+          weeklyGroups[groupKey].current.push(normalized.current);
+          weeklyGroups[groupKey].power.push(normalized.power);
+          weeklyGroups[groupKey].rpm.push(normalized.rpm);
+        });
+
+        Object.entries(weeklyGroups).forEach(([ts, data]) => {
+          if (data.voltage.length === 0) return;
+          
+          const date = new Date(parseInt(ts));
+          const label = TESTING_MODE ?
+            date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) :
+            date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+          
+          weeklyData.labels.push(label);
+          weeklyData.voltage.push(parseFloat((data.voltage.reduce((a, b) => a + b) / data.voltage.length).toFixed(2)));
+          weeklyData.current.push(parseFloat((data.current.reduce((a, b) => a + b) / data.current.length).toFixed(2)));
+          weeklyData.power.push(parseFloat((data.power.reduce((a, b) => a + b) / data.power.length).toFixed(2)));
+          weeklyData.rpm.push(parseFloat((data.rpm.reduce((a, b) => a + b) / data.rpm.length).toFixed(2)));
+          weeklyData.timestamps.push(parseInt(ts));
+        });
+
+        // ===== MONTHLY (6 jam/30 hari terakhir, group per 30min/1minggu) =====
+        const monthlyPeriod = TESTING_MODE ? (6 * 60 * 60 * 1000) : (30 * 24 * 60 * 60 * 1000);
+        const monthlyHistory = historyArray.filter(item => 
+          item.timestamp >= Date.now() - monthlyPeriod
+        );
+        
+        const monthlyGroupInterval = TESTING_MODE ? (30 * 60 * 1000) : (7 * 24 * 60 * 60 * 1000);
+        const monthlyGroups = {};
+        
+        (monthlyHistory.length > 0 ? monthlyHistory : historyArray).forEach(item => {
+          const normalized = normalizeData(item.voltage, item.current, item.power, item.rpm);
+          const groupKey = Math.floor(item.timestamp / monthlyGroupInterval) * monthlyGroupInterval;
+          
+          if (!monthlyGroups[groupKey]) {
+            monthlyGroups[groupKey] = { voltage: [], current: [], power: [], rpm: [] };
+          }
+          
+          monthlyGroups[groupKey].voltage.push(normalized.voltage);
+          monthlyGroups[groupKey].current.push(normalized.current);
+          monthlyGroups[groupKey].power.push(normalized.power);
+          monthlyGroups[groupKey].rpm.push(normalized.rpm);
+        });
+
+        Object.entries(monthlyGroups).forEach(([ts, data]) => {
+          if (data.voltage.length === 0) return;
+          
+          const date = new Date(parseInt(ts));
+          const label = TESTING_MODE ?
+            date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) :
+            date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+          
+          monthlyData.labels.push(label);
+          monthlyData.voltage.push(parseFloat((data.voltage.reduce((a, b) => a + b) / data.voltage.length).toFixed(2)));
+          monthlyData.current.push(parseFloat((data.current.reduce((a, b) => a + b) / data.current.length).toFixed(2)));
+          monthlyData.power.push(parseFloat((data.power.reduce((a, b) => a + b) / data.power.length).toFixed(2)));
+          monthlyData.rpm.push(parseFloat((data.rpm.reduce((a, b) => a + b) / data.rpm.length).toFixed(2)));
+          monthlyData.timestamps.push(parseInt(ts));
+        });
+
+        console.log(`✅ Processed - Daily: ${dailyData.labels.length}, Weekly: ${weeklyData.labels.length}, Monthly: ${monthlyData.labels.length}`);
+
+        // Update chart if viewing that tab
+        const activeTab = document.querySelector(".tab-button.active");
+        if (activeTab) {
+          const type = activeTab.dataset.chartType;
+          if (type === "daily") setChartData(dailyData);
+          else if (type === "weekly") setChartData(weeklyData);
+          else if (type === "monthly") setChartData(monthlyData);
+        }
       });
-      
-      // Hitung rata-rata semua data hari ini
-      const todayRealtimeData = {
-        voltage: [...(todayIndex >= 0 ? [dailyData.voltage[todayIndex]] : []), currentData.voltage[0]],
-        current: [...(todayIndex >= 0 ? [dailyData.current[todayIndex]] : []), currentData.current[0]],
-        power: [...(todayIndex >= 0 ? [dailyData.power[todayIndex]] : []), currentData.power[0]],
-        rpm: [...(todayIndex >= 0 ? [dailyData.rpm[todayIndex]] : []), currentData.rpm[0]]
-      };
-      
-      const avgVoltage = todayRealtimeData.voltage.reduce((a, b) => a + b, 0) / todayRealtimeData.voltage.length;
-      const avgCurrent = todayRealtimeData.current.reduce((a, b) => a + b, 0) / todayRealtimeData.current.length;
-      const avgPower = todayRealtimeData.power.reduce((a, b) => a + b, 0) / todayRealtimeData.power.length;
-      const avgRpm = todayRealtimeData.rpm.reduce((a, b) => a + b, 0) / todayRealtimeData.rpm.length;
-      
-      if (todayIndex >= 0) {
-        // Update data hari ini
-        dailyData.voltage[todayIndex] = parseFloat(avgVoltage.toFixed(2));
-        dailyData.current[todayIndex] = parseFloat(avgCurrent.toFixed(2));
-        dailyData.power[todayIndex] = parseFloat(avgPower.toFixed(2));
-        dailyData.rpm[todayIndex] = parseFloat(avgRpm.toFixed(2));
-      } else {
-        // Tambah data hari baru
-        dailyData.labels.push(now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }));
-        dailyData.voltage.push(parseFloat(avgVoltage.toFixed(2)));
-        dailyData.current.push(parseFloat(avgCurrent.toFixed(2)));
-        dailyData.power.push(parseFloat(avgPower.toFixed(2)));
-        dailyData.rpm.push(parseFloat(avgRpm.toFixed(2)));
-        dailyData.timestamps.push(now.getTime());
-      }
-      
-      // Simpan timestamp hari terakhir diproses
-      lastProcessedDay = now.getTime();
-
-      // Hapus data lama jika lebih dari 7 hari
-      const sevenDaysAgo = now.getTime() - (7 * 24 * 60 * 60 * 1000);
-      const recentData = dailyData.timestamps.map((ts, i) => ({
-        ts,
-        index: i
-      })).filter(item => item.ts >= sevenDaysAgo);
-
-      // Perbarui data harian dengan hanya data 7 hari terakhir
-      if (recentData.length < dailyData.timestamps.length) {
-        const newData = {
-          labels: [],
-          voltage: [],
-          current: [],
-          power: [],
-          rpm: [],
-          timestamps: []
-        };
-
-        recentData.forEach(item => {
-          newData.labels.push(dailyData.labels[item.index]);
-          newData.voltage.push(dailyData.voltage[item.index]);
-          newData.current.push(dailyData.current[item.index]);
-          newData.power.push(dailyData.power[item.index]);
-          newData.rpm.push(dailyData.rpm[item.index]);
-          newData.timestamps.push(dailyData.timestamps[item.index]);
-        });
-
-        dailyData = newData;
-      }
-
-      // Proses data mingguan jika sudah 7 hari
-      if (dailyData.timestamps.length >= 7) {
-        processWeeklyData();
-      }
     }
 
-    // Fungsi untuk memproses data mingguan
-    function processWeeklyData() {
-      if (dailyData.timestamps.length < 7) return;
-
-      const now = new Date();
-      const lastWeekData = {
-        voltage: dailyData.voltage.slice(-7),
-        current: dailyData.current.slice(-7),
-        power: dailyData.power.slice(-7),
-        rpm: dailyData.rpm.slice(-7)
-      };
-
-      const avgVoltage = lastWeekData.voltage.reduce((a, b) => a + b, 0) / 7;
-      const avgCurrent = lastWeekData.current.reduce((a, b) => a + b, 0) / 7;
-      const avgPower = lastWeekData.power.reduce((a, b) => a + b, 0) / 7;
-      const avgRpm = lastWeekData.rpm.reduce((a, b) => a + b, 0) / 7;
-
-      weeklyData.labels.push(now.toLocaleDateString('id-ID', { month: 'short', day: 'numeric' }));
-      weeklyData.voltage.push(parseFloat(avgVoltage.toFixed(2)));
-      weeklyData.current.push(parseFloat(avgCurrent.toFixed(2)));
-      weeklyData.power.push(parseFloat(avgPower.toFixed(2)));
-      weeklyData.rpm.push(parseFloat(avgRpm.toFixed(2)));
-      weeklyData.timestamps.push(now.getTime());
-
-      // Hapus data lama jika lebih dari 4 minggu
-      const fourWeeksAgo = now.getTime() - (28 * 24 * 60 * 60 * 1000);
-      const recentWeeklyData = weeklyData.timestamps.map((ts, i) => ({
-        ts,
-        index: i
-      })).filter(item => item.ts >= fourWeeksAgo);
-
-      if (recentWeeklyData.length < weeklyData.timestamps.length) {
-        const newData = {
-          labels: [],
-          voltage: [],
-          current: [],
-          power: [],
-          rpm: [],
-          timestamps: []
-        };
-
-        recentWeeklyData.forEach(item => {
-          newData.labels.push(weeklyData.labels[item.index]);
-          newData.voltage.push(weeklyData.voltage[item.index]);
-          newData.current.push(weeklyData.current[item.index]);
-          newData.power.push(weeklyData.power[item.index]);
-          newData.rpm.push(weeklyData.rpm[item.index]);
-          newData.timestamps.push(weeklyData.timestamps[item.index]);
-        });
-
-        weeklyData = newData;
-      }
-
-      // Proses data bulanan jika sudah 4 minggu
-      if (weeklyData.timestamps.length >= 4) {
-        processMonthlyData();
-      }
-    }
-
-    // Fungsi untuk memproses data bulanan
-    function processMonthlyData() {
-      if (weeklyData.timestamps.length < 4) return;
-
-      const now = new Date();
-      const lastMonthData = {
-        voltage: weeklyData.voltage.slice(-4),
-        current: weeklyData.current.slice(-4),
-        power: weeklyData.power.slice(-4),
-        rpm: weeklyData.rpm.slice(-4)
-      };
-
-      const avgVoltage = lastMonthData.voltage.reduce((a, b) => a + b, 0) / 4;
-      const avgCurrent = lastMonthData.current.reduce((a, b) => a + b, 0) / 4;
-      const avgPower = lastMonthData.power.reduce((a, b) => a + b, 0) / 4;
-      const avgRpm = lastMonthData.rpm.reduce((a, b) => a + b, 0) / 4;
-
-      monthlyData.labels.push(now.toLocaleDateString('id-ID', { year: 'numeric', month: 'long' }));
-      monthlyData.voltage.push(parseFloat(avgVoltage.toFixed(2)));
-      monthlyData.current.push(parseFloat(avgCurrent.toFixed(2)));
-      monthlyData.power.push(parseFloat(avgPower.toFixed(2)));
-      monthlyData.rpm.push(parseFloat(avgRpm.toFixed(2)));
-      monthlyData.timestamps.push(now.getTime());
-
-      // Hapus data lama jika lebih dari 12 bulan
-      const oneYearAgo = now.getTime() - (365 * 24 * 60 * 60 * 1000);
-      const recentMonthlyData = monthlyData.timestamps.map((ts, i) => ({
-        ts,
-        index: i
-      })).filter(item => item.ts >= oneYearAgo);
-
-      if (recentMonthlyData.length < monthlyData.timestamps.length) {
-        const newData = {
-          labels: [],
-          voltage: [],
-          current: [],
-          power: [],
-          rpm: [],
-          timestamps: []
-        };
-
-        recentMonthlyData.forEach(item => {
-          newData.labels.push(monthlyData.labels[item.index]);
-          newData.voltage.push(monthlyData.voltage[item.index]);
-          newData.current.push(monthlyData.current[item.index]);
-          newData.power.push(monthlyData.power[item.index]);
-          newData.rpm.push(monthlyData.rpm[item.index]);
-          newData.timestamps.push(monthlyData.timestamps[item.index]);
-        });
-
-        monthlyData = newData;
-      }
-    }
-
-    // === INITIALIZE CHART ===
+    // ======== CHART SETUP ========
     const ctx = document.getElementById("realtimeChart").getContext("2d");
     const chart = new Chart(ctx, {
       type: "line",
@@ -328,11 +379,8 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     });
 
-    console.log("✅ Chart initialized");
-
     function setChartData(source) {
-      if (!source || !source.labels || source.labels.length === 0) {
-        // Jika tidak ada data, tampilkan pesan
+      if (!source || source.labels.length === 0) {
         chart.data.labels = ['Menunggu data...'];
         chart.data.datasets = [
           { label: "Tegangan (V)", data: [0], borderColor: "#e53e3e", tension: 0.4, fill: false },
@@ -341,64 +389,37 @@ document.addEventListener("DOMContentLoaded", () => {
           { label: "RPM", data: [0], borderColor: "#d69e2e", yAxisID: "y1", tension: 0.4, fill: false },
         ];
       } else {
-        // Tampilkan data yang ada
         chart.data.labels = source.labels;
         chart.data.datasets = [
-          { label: "Tegangan (V)", data: source.voltage || [], borderColor: "#e53e3e", tension: 0.4, fill: false },
-          { label: "Arus (A)", data: source.current || [], borderColor: "#3182ce", tension: 0.4, fill: false },
-          { label: "Daya (W)", data: source.power || [], borderColor: "#38a169", tension: 0.4, fill: false },
-          { label: "RPM", data: source.rpm || [], borderColor: "#d69e2e", yAxisID: "y1", tension: 0.4, fill: false },
+          { label: "Tegangan (V)", data: source.voltage, borderColor: "#e53e3e", tension: 0.4, fill: false },
+          { label: "Arus (A)", data: source.current, borderColor: "#3182ce", tension: 0.4, fill: false },
+          { label: "Daya (W)", data: source.power, borderColor: "#38a169", tension: 0.4, fill: false },
+          { label: "RPM", data: source.rpm, borderColor: "#d69e2e", yAxisID: "y1", tension: 0.4, fill: false },
         ];
       }
-
-      // Update chart
       chart.update();
-
-      // Update tabel data
       updateDataTable();
     }
 
-    // === UPDATE DATA TABLE FUNCTION ===
     function updateDataTable() {
       const tableBody = document.getElementById('dataTableBody');
       const activeTab = document.querySelector(".tab-button.active");
-
       if (!activeTab || !tableBody) return;
 
-      const chartType = activeTab.dataset.chartType;
-      let dataSource;
+      const type = activeTab.dataset.chartType;
+      let dataSource = type === "realtime" ? realtimeData :
+                       type === "daily" ? dailyData :
+                       type === "weekly" ? weeklyData : monthlyData;
 
-      if (chartType === "realtime") {
-        dataSource = realtimeData;
-      } else if (chartType === "daily") {
-        dataSource = dailyData;
-      } else if (chartType === "weekly") {
-        dataSource = weeklyData;
-      } else if (chartType === "monthly") {
-        dataSource = monthlyData;
-      }
-
-      // Clear existing rows
       tableBody.innerHTML = '';
-
-      // Get the latest 5 data points
       const dataLength = dataSource.labels.length;
       const startIndex = Math.max(0, dataLength - 5);
 
-      // If no data, show empty state
       if (dataLength === 0) {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td class="value-voltage">-</td>
-          <td class="value-current">-</td>
-          <td class="value-power">-</td>
-          <td class="value-rpm">-</td>
-        `;
-        tableBody.appendChild(row);
+        tableBody.innerHTML = '<tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>';
         return;
       }
 
-      // Populate table with latest data
       for (let i = startIndex; i < dataLength; i++) {
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -411,207 +432,54 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // === REALTIME DATABASE ===
+    // ======== LOAD HISTORY ========
+    loadAndProcessHistory();
+
+    // ======== LISTEN PLTMH ========
     const pltmhRef = ref(db, "PLTMH");
-    const historyRef = ref(db, "history");
-
-    // Fungsi untuk memuat data histori saat pertama kali aplikasi dimuat
-    function loadHistoryData() {
-      console.log("📚 Loading history data...");
-      
-      onValue(historyRef, (snapshot) => {
-        if (!snapshot.exists()) {
-          console.log("📚 No history data found - Starting fresh");
-          return;
-        }
-
-        const history = snapshot.val();
-        const now = new Date();
-        const oneDayAgo = now.getTime() - (24 * 60 * 60 * 1000);
-
-        console.log("📚 History data loaded:", Object.keys(history).length, "entries");
-
-        // Reset data
-        dailyData = { labels: [], voltage: [], current: [], power: [], rpm: [], timestamps: [] };
-        weeklyData = { labels: [], voltage: [], current: [], power: [], rpm: [], timestamps: [] };
-        monthlyData = { labels: [], voltage: [], current: [], power: [], rpm: [], timestamps: [] };
-
-        // Proses data histori
-        Object.entries(history).forEach(([timestamp, data]) => {
-          const ts = parseInt(timestamp);
-          const date = new Date(ts);
-
-          // Tambahkan ke data harian jika dalam 24 jam terakhir
-          if (ts >= oneDayAgo) {
-            const timeStr = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-            const dayStr = date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-
-            // Cek apakah data untuk jam ini sudah ada
-            const existingIndex = dailyData.labels.findIndex((label, i) =>
-              dailyData.timestamps[i] >= getStartOfDay(date) &&
-              dailyData.timestamps[i] < getStartOfDay(date) + (24 * 60 * 60 * 1000)
-            );
-
-            if (existingIndex === -1) {
-              dailyData.labels.push(dayStr);
-              dailyData.voltage.push(parseFloat(data.voltage || 0));
-              dailyData.current.push(parseFloat(data.current || 0));
-              dailyData.power.push(parseFloat(data.power || 0));
-              dailyData.rpm.push(parseFloat(data.rpm || 0));
-              dailyData.timestamps.push(ts);
-            }
-          }
-        });
-
-        // Set last processed time
-        if (dailyData.timestamps.length > 0) {
-          lastProcessedDay = Math.max(...dailyData.timestamps);
-        }
-
-        console.log("📚 Daily data processed:", dailyData.labels.length, "entries");
-
-        // Update chart jika tab daily aktif
-        const activeTab = document.querySelector(".tab-button.active");
-        if (activeTab && activeTab.dataset.chartType === "daily") {
-          setChartData(dailyData);
-        }
-      }, (error) => {
-        console.error("❌ Error loading history:", error);
-      });
-    }
-
-    // Panggil fungsi untuk memuat data histori
-    loadHistoryData();
-
-    // Fungsi untuk menyimpan data ke Firebase
-    function saveToHistory(data) {
-      const timestamp = new Date().getTime();
-      const historyRef = ref(db, `history/${timestamp}`);
-
-      // Simpan data ke Firebase
-      set(historyRef, {
-        voltage: parseFloat(data.voltage || 0).toFixed(2),
-        current: parseFloat(data.current || 0).toFixed(2),
-        power: parseFloat(data.power || 0).toFixed(2),
-        rpm: parseFloat(data.rpm || 0).toFixed(2),
-        timestamp: timestamp
-      }).catch((error) => {
-        console.error("❌ Error saving history:", error);
-      });
-    }
-
-    // === LISTEN UNTUK PERUBAHAN DATA REALTIME ===
-    console.log("👂 Setting up PLTMH listener...");
-    console.log("📍 Database path: PLTMH");
     
     onValue(pltmhRef, (snapshot) => {
-      console.log("📡 Data snapshot received");
-      console.log("🔍 Snapshot exists:", snapshot.exists());
-      
       if (!snapshot.exists()) {
-        console.warn("⚠️ PLTMH data does not exist in Firebase!");
-        console.log("💡 Troubleshooting:");
-        console.log("1. Buka Firebase Console: https://console.firebase.google.com/");
-        console.log("2. Pilih project: hydrovoltiger-e2d28");
-        console.log("3. Buka Realtime Database");
-        console.log("4. Pastikan ada node 'PLTMH' dengan struktur:");
-        console.log(`{
-  "PLTMH": {
-    "Tegangan_V": 220,
-    "Arus_mA": 5,
-    "Daya_mW": 1100,
-    "RPM_Turbin": 1500,
-    "Total_Energi_mWh": 100
-  }
-}`);
-        
-        // Tampilkan data dummy untuk development
-        console.log("🔧 Using dummy data for development");
+        console.warn("⚠️ PLTMH data tidak ada");
         return;
       }
       
       const data = snapshot.val();
-      console.log("📦 Raw Firebase data:", data);
-      console.log("📋 Available keys:", Object.keys(data));
+      let voltage = parseFloat(data.Tegangan_V || data.voltage || 0);
+      let current = parseFloat(data.Arus_mA || data.current || 0);
+      let power = parseFloat(data.Daya_mW || data.power || 0);
+      let rpm = parseFloat(data.RPM_Turbin || data.rpm || 0);
+      const totalEnergy = parseFloat(data.Total_Energi_mWh || 0);
 
-      // Parse data dengan validasi
-      const voltage = parseFloat(data.Tegangan_V || data.tegangan || data.voltage || 0);
-      const current = parseFloat(data.Arus_mA || data.arus || data.current || 0);
-      const power = parseFloat(data.Daya_mW || data.daya || data.power || 0);
-      const rpm = parseFloat(data.RPM_Turbin || data.rpm || data.RPM || 0);
-      const totalEnergy = parseFloat(data.Total_Energi_mWh || data.totalEnergy || 0);
+      // Normalize data
+      const normalized = normalizeData(voltage, current, power, rpm);
+      voltage = normalized.voltage;
+      current = normalized.current;
+      power = normalized.power;
+      rpm = normalized.rpm;
 
-      console.log("✅ Parsed values:", { voltage, current, power, rpm, totalEnergy });
-
-      // Validasi data
-      if (isNaN(voltage) || isNaN(current) || isNaN(power) || isNaN(rpm)) {
-        console.error("❌ Invalid data received - some values are NaN");
-        return;
-      }
-
-      // Simpan data ke histori
-      saveToHistory({
-        voltage: voltage,
-        current: current,
-        power: power,
-        rpm: rpm
-      });
-
-      // Update card di dashboard
+      // Update UI
       const voltageEl = document.getElementById("voltage");
       const currentEl = document.getElementById("current");
       const powerEl = document.getElementById("power");
       const rpmEl = document.getElementById("rpm");
       const totalPowerEl = document.getElementById("totalPower");
 
-      console.log("🎯 Updating DOM elements...");
-      
-      if (voltageEl) {
-        voltageEl.textContent = voltage.toFixed(2);
-        console.log("✅ Voltage updated:", voltage.toFixed(2));
-      } else {
-        console.error("❌ Voltage element not found");
-      }
-      
-      if (currentEl) {
-        currentEl.textContent = current.toFixed(2);
-        console.log("✅ Current updated:", current.toFixed(2));
-      } else {
-        console.error("❌ Current element not found");
-      }
-      
-      if (powerEl) {
-        powerEl.textContent = power.toFixed(2);
-        console.log("✅ Power updated:", power.toFixed(2));
-      } else {
-        console.error("❌ Power element not found");
-      }
-      
-      if (rpmEl) {
-        rpmEl.textContent = rpm.toFixed(2);
-        console.log("✅ RPM updated:", rpm.toFixed(2));
-      } else {
-        console.error("❌ RPM element not found");
-      }
-      
-      if (totalPowerEl) {
-        totalPowerEl.textContent = totalEnergy.toFixed(4);
-        console.log("✅ Total power updated:", totalEnergy.toFixed(4));
-      } else {
-        console.error("❌ Total power element not found");
-      }
+      if (voltageEl) voltageEl.textContent = voltage.toFixed(2);
+      if (currentEl) currentEl.textContent = current.toFixed(2);
+      if (powerEl) powerEl.textContent = power.toFixed(2);
+      if (rpmEl) rpmEl.textContent = rpm.toFixed(2);
+      if (totalPowerEl) totalPowerEl.textContent = totalEnergy.toFixed(4);
 
-      // Duration calculation
+      // Duration
       let durationText = "00:00:00";
       if (rpm > 0) {
-        if (turbineStartTime === null) {
-          turbineStartTime = new Date();
-        }
-        const durationMs = new Date() - turbineStartTime;
-        const hours = Math.floor(durationMs / 3600000);
-        const minutes = Math.floor((durationMs % 3600000) / 60000);
-        const seconds = Math.floor((durationMs % 60000) / 1000);
-        durationText = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        if (turbineStartTime === null) turbineStartTime = new Date();
+        const ms = new Date() - turbineStartTime;
+        const h = Math.floor(ms / 3600000);
+        const m = Math.floor((ms % 3600000) / 60000);
+        const s = Math.floor((ms % 60000) / 1000);
+        durationText = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
       } else {
         turbineStartTime = null;
       }
@@ -622,9 +490,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const efficiencyEl = document.getElementById("efficiency");
       if (efficiencyEl) efficiencyEl.textContent = (85 + Math.random() * 10).toFixed(0);
 
-      // Tambah ke chart data realtime
+      // Update realtime chart
       const now = new Date();
-      const timeLabel = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      const timeLabel = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
       realtimeData.labels.push(timeLabel);
       realtimeData.voltage.push(voltage);
@@ -632,81 +500,39 @@ document.addEventListener("DOMContentLoaded", () => {
       realtimeData.power.push(power);
       realtimeData.rpm.push(rpm);
 
-      console.log("📊 Realtime data updated, total points:", realtimeData.labels.length);
-
-      // Keep only last 10 data points untuk realtime
       if (realtimeData.labels.length > 10) {
-        Object.keys(realtimeData).forEach((key) => realtimeData[key].shift());
+        Object.keys(realtimeData).forEach(key => realtimeData[key].shift());
       }
 
-      // Proses data untuk harian, mingguan, dan bulanan
-      processDailyData({
-        voltage: [voltage],
-        current: [current],
-        power: [power],
-        rpm: [rpm]
-      });
+      // Save snapshot
+      savePeriodicSnapshot({ voltage, current, power, rpm });
 
-      // Update chart and table if realtime tab is active
+      // Update chart if realtime tab active
       const activeTab = document.querySelector(".tab-button.active");
       if (activeTab && activeTab.dataset.chartType === "realtime") {
         setChartData(realtimeData);
-        updateDataTable();
-        console.log("✅ Chart and table updated");
-      }
-      
-      console.log("✅ Data processing complete");
-      
-    }, (error) => {
-      console.error("❌ Firebase PLTMH Error:", error);
-      console.error("📋 Error details:");
-      console.error("  - Code:", error.code);
-      console.error("  - Message:", error.message);
-      
-      if (error.code === "PERMISSION_DENIED") {
-        console.error("🚫 PERMISSION DENIED!");
-        console.log("💡 Solutions:");
-        console.log("1. Check Firebase Rules in Console");
-        console.log("2. Make sure you're authenticated");
-        console.log("3. Current user:", auth.currentUser?.email || "NOT LOGGED IN");
-        console.log("4. Try this Firebase rule:");
-        console.log(`{
-  "rules": {
-    ".read": "auth != null",
-    ".write": "auth != null"
-  }
-}`);
       }
     });
 
-    // === Ganti Tab ===
+    // ======== TAB SWITCHING ========
     document.querySelectorAll(".tab-button").forEach((button) => {
       button.addEventListener("click", () => {
-        console.log("🔄 Switching tab to:", button.dataset.chartType);
-        
-        document.querySelectorAll(".tab-button").forEach((btn) => btn.classList.remove("active"));
+        document.querySelectorAll(".tab-button").forEach(btn => btn.classList.remove("active"));
         button.classList.add("active");
 
-        if (button.dataset.chartType === "realtime") {
-          setChartData(realtimeData);
-        } else if (button.dataset.chartType === "daily") {
-          setChartData(dailyData);
-        } else if (button.dataset.chartType === "weekly") {
-          setChartData(weeklyData);
-        } else if (button.dataset.chartType === "monthly") {
-          setChartData(monthlyData);
-        }
+        const type = button.dataset.chartType;
+        if (type === "realtime") setChartData(realtimeData);
+        else if (type === "daily") setChartData(dailyData);
+        else if (type === "weekly") setChartData(weeklyData);
+        else if (type === "monthly") setChartData(monthlyData);
       });
     });
 
-    // Set awal
     setChartData(realtimeData);
-    updateDataTable();
-    
-    console.log("✅ Dashboard initialized successfully");
+    console.log("✅ Dashboard ready!");
   }
 
-  // === DROPDOWN PROFILE SIDEBAR ===
+  // ======== PROFILE DROPDOWN ========
   const userInfoButton = document.getElementById("userInfoButton");
   const profileDropdownNav = document.getElementById("profileDropdownNav");
   const dropdownIconNav = document.getElementById("dropdownIconNav");
@@ -724,52 +550,22 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // === AKSI TOMBOL DROPDOWN ===
     const settingsItemNav = profileDropdownNav.querySelector(".dropdown-item-nav:nth-child(1)");
     const logoutItemNav = profileDropdownNav.querySelector(".dropdown-item-nav.logout");
 
     if (settingsItemNav) {
       settingsItemNav.addEventListener("click", () => {
-        const toast = document.createElement("div");
-        toast.className = "toast-message";
-        toast.textContent = "Pengaturan belum tersedia";
-        document.body.appendChild(toast);
-
-        setTimeout(() => toast.classList.add("show"), 100);
-        setTimeout(() => {
-          toast.classList.remove("show");
-          setTimeout(() => toast.remove(), 300);
-        }, 2000);
+        alert("Pengaturan belum tersedia");
       });
     }
 
     if (logoutItemNav) {
       logoutItemNav.addEventListener("click", () => {
-        console.log("🚪 Logging out...");
-        
-        const toast = document.createElement("div");
-        toast.className = "toast-message";
-        toast.textContent = "Memproses logout...";
-        document.body.appendChild(toast);
-        
-        setTimeout(() => toast.classList.add("show"), 100);
-
-        signOut(auth)
-          .then(() => {
-            console.log("✅ Logout successful");
-            toast.textContent = "Logout berhasil!";
-            setTimeout(() => {
-              window.location.href = "./login/login.html";
-            }, 700);
-          })
-          .catch((error) => {
-            console.error("❌ Logout error:", error);
-            toast.textContent = "Terjadi kesalahan saat logout. Silahkan coba lagi.";
-            setTimeout(() => {
-              toast.classList.remove("show");
-              setTimeout(() => toast.remove(), 300);
-            }, 2000);
-          });
+        signOut(auth).then(() => {
+          window.location.href = "./login/login.html";
+        }).catch((error) => {
+          console.error("Logout error:", error);
+        });
       });
     }
   }

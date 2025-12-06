@@ -176,14 +176,14 @@ onAuthStateChanged(auth, (user) => {
 
 // DROPDOWN TOGGLE
 document.getElementById("userInfoButton").addEventListener("click", () => {
-  const dropdown = document.getElementById("profileDropdownNav");
+  const dropdown = document.getElementById("ProfileDropdownNav");
   dropdown.classList.toggle("show");
 });
 
 // Close dropdown when clicking outside
 document.addEventListener("click", (e) => {
   const userInfo = document.getElementById("userInfoButton");
-  const dropdown = document.getElementById("profileDropdownNav");
+  const dropdown = document.getElementById("ProfileDropdownNav");
   
   if (!userInfo.contains(e.target) && !dropdown.contains(e.target)) {
     dropdown.classList.remove("show");

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Berita - Hydrovoltiger</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="news-detail.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+  <div class="dashboard-container">
+
+    <!-- SIDEBAR NAV -->
+    <nav class="sidebar-nav">
+      <div class="nav-header">
+        <div class="nav-logo">
+          <ion-icon name="water-outline"></ion-icon>
+          <span>Hydrovoltiger</span>
+        </div>
+      </div>
+
+      <div class="nav-menu">
+          <a href="../main.html" class="nav-item">
+              <ion-icon name="home-outline"></ion-icon>
+              <span>Home</span>
+          </a>
+          <a href="../analytics/analytics.html" class="nav-item">
+              <ion-icon name="analytics-outline"></ion-icon>
+              <span>Analytics</span>
+          </a>
+          <a href="news.html" class="nav-item active">
+              <ion-icon name="newspaper-outline"></ion-icon>
+              <span>News</span>
+          </a>
+          <a href="../device/device.html" class="nav-item">
+              <ion-icon name="hardware-chip-outline"></ion-icon>
+              <span>Device</span>
+          </a>
+          <a href="../Profile/Profile.html" class="nav-item">
+              <ion-icon name="person-outline"></ion-icon>
+              <span>Profile</span>
+          </a>
+      </div>
+
+      <!-- FOOTER USER -->
+      <div class="nav-footer">
+        <div class="user-info-nav" id="userInfoButton">
+          <div class="user-avatar-nav" id="userAvatarNav">U</div>
+
+          <div class="user-details-nav">
+            <span class="user-name-nav" id="userNameNav">User</span>
+            <span class="user-status">Online</span>
+          </div>
+
+          <ion-icon name="chevron-down-outline" class="dropdown-icon-nav"></ion-icon>
+        </div>
+
+        <div class="Profile-dropdown-nav" id="ProfileDropdownNav">
+          <div class="dropdown-item-nav">
+            <ion-icon name="settings-outline"></ion-icon>
+            <span>Pengaturan</span>
+          </div>
+
+          <div class="dropdown-divider-nav"></div>
+
+          <div class="dropdown-item-nav logout" id="logoutButton">
+            <ion-icon name="log-out-outline"></ion-icon>
+            <span>Keluar</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- MOBILE NAV -->
+    <nav class="mobile-nav">
+        <a href="../main.html" class="mobile-nav-item">
+            <ion-icon name="home-outline"></ion-icon>
+            <span>Home</span>
+        </a>
+        <a href="../analytics/analytics.html" class="mobile-nav-item">
+                <ion-icon name="analytics-outline"></ion-icon>
+                <span>Analytics</span>
+        </a>
+        <a href="news.html" class="mobile-nav-item active">
+            <ion-icon name="newspaper-outline"></ion-icon>
+            <span>News</span>
+        </a>
+        <a href="../device/device.html" class="mobile-nav-item">
+            <ion-icon name="hardware-chip-outline"></ion-icon>
+            <span>Device</span>
+        </a>
+        <a href="../Profile/Profile.html" class="mobile-nav-item">
+            <ion-icon name="person-outline"></ion-icon>
+            <span>Profile</span>
+        </a>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <div class="container">
+
+        <!-- BACK BUTTON -->
+        <div class="back-button-wrapper">
+          <a href="news.html" class="back-button">
+            <ion-icon name="arrow-back-outline"></ion-icon>
+            <span>Kembali ke Berita</span>
+          </a>
+        </div>
+
+        <!-- LOADING STATE -->
+        <div id="loadingState" class="loading-state">
+          <div class="spinner"></div>
+          <p>Memuat berita...</p>
+        </div>
+
+        <!-- ERROR STATE -->
+        <div id="errorState" class="error-state" style="display: none;">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          <p>Berita tidak ditemukan atau terjadi kesalahan.</p>
+          <a href="news.html" class="btn-secondary">Kembali ke Berita</a>
+        </div>
+
+        <!-- NEWS DETAIL -->
+        <article id="newsDetail" class="news-detail" style="display: none;">
+          <div class="news-header">
+            <div class="news-category-badge" id="newsCategoryBadge">Umum</div>
+            <h1 id="newsTitle">Judul Berita</h1>
+            <div class="news-meta-info">
+              <div class="meta-item">
+                <ion-icon name="calendar-outline"></ion-icon>
+                <span id="newsDate">1 Januari 2024</span>
+              </div>
+              <div class="meta-item">
+                <ion-icon name="person-outline"></ion-icon>
+                <span id="newsAuthor">Admin</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="news-image-wrapper">
+            <img id="newsImage" src="" alt="News Image">
+          </div>
+
+          <div class="news-body">
+            <div id="newsContent" class="news-text">
+              <!-- Content will be loaded here -->
+            </div>
+          </div>
+
+          <!-- SHARE SECTION -->
+          <div class="news-share">
+            <h3>Bagikan Artikel Ini</h3>
+            <div class="share-buttons">
+              <button class="share-btn" onclick="shareToWhatsApp()">
+                <i class="fab fa-whatsapp"></i>
+                <span>WhatsApp</span>
+              </button>
+              <button class="share-btn" onclick="shareToFacebook()">
+                <i class="fab fa-facebook"></i>
+                <span>Facebook</span>
+              </button>
+              <button class="share-btn" onclick="shareToTwitter()">
+                <i class="fab fa-twitter"></i>
+                <span>Twitter</span>
+              </button>
+              <button class="share-btn" onclick="copyLink()">
+                <ion-icon name="link-outline"></ion-icon>
+                <span>Salin Link</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script type="module" src="news-detail.js"></script>
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

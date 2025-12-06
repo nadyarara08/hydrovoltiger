@@ -10,9 +10,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 // Profile elements
-const profileName = document.getElementById("userName");
-const profileEmail = document.getElementById("userEmail");
-const profileAvatar = document.getElementById("avatarLarge");
+const ProfileName = document.getElementById("userName");
+const ProfileEmail = document.getElementById("userEmail");
+const ProfileAvatar = document.getElementById("avatarLarge");
 const joinDateEl = document.getElementById("joinDate");
 const deleteAccountBtn = document.getElementById("deleteAccountBtn");
 const notificationToggle = document.getElementById("notificationToggle");
@@ -22,7 +22,7 @@ const securityBtn = document.getElementById("securityBtn");
 const userAvatarNav = document.getElementById("userAvatarNav");
 const userNameNav = document.getElementById("userNameNav");
 const userInfoButton = document.getElementById("userInfoButton");
-const profileDropdownNav = document.getElementById("profileDropdownNav");
+const ProfileDropdownNav = document.getElementById("ProfileDropdownNav");
 const logoutButton = document.getElementById("logoutButton");
 
 const colors = [
@@ -52,11 +52,11 @@ onAuthStateChanged(auth, (user) => {
     const color = getColorFromName(name);
     const joinDate = user.metadata.creationTime;
 
-    // Update profile card
-    profileName.textContent = name;
-    profileEmail.textContent = email;
-    profileAvatar.textContent = initial;
-    profileAvatar.style.background = `linear-gradient(135deg, ${color}, ${adjustColor(color, -20)})`;
+    // Update Profile card
+    ProfileName.textContent = name;
+    ProfileEmail.textContent = email;
+    ProfileAvatar.textContent = initial;
+    ProfileAvatar.style.background = `linear-gradient(135deg, ${color}, ${adjustColor(color, -20)})`;
     joinDateEl.textContent = formatDate(joinDate);
 
     // Update sidebar
@@ -82,13 +82,13 @@ function adjustColor(color, amount) {
 // === DROPDOWN TOGGLE ===
 userInfoButton?.addEventListener("click", (e) => {
   e.stopPropagation();
-  profileDropdownNav.classList.toggle("show");
+  ProfileDropdownNav.classList.toggle("show");
 });
 
 // Close dropdown when clicking outside
 document.addEventListener("click", (e) => {
   if (!userInfoButton?.contains(e.target)) {
-    profileDropdownNav?.classList.remove("show");
+    ProfileDropdownNav?.classList.remove("show");
   }
 });
 

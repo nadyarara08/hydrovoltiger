@@ -202,7 +202,7 @@ body::before {
     transform: rotate(180deg);
 }
 
-.profile-dropdown-nav {
+.Profile-dropdown-nav {
     position: absolute;
     bottom: calc(100% + 10px);
     left: 15px;
@@ -217,7 +217,7 @@ body::before {
     animation: dropdownSlideUp 0.2s ease;
 }
 
-.profile-dropdown-nav.show {
+.Profile-dropdown-nav.show {
     display: block;
 }
 
@@ -358,7 +358,7 @@ body::before {
 }
 
 /* === Profile Grid === */
-.profile-grid {
+.Profile-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
@@ -366,7 +366,7 @@ body::before {
 }
 
 /* === Profile Card === */
-.profile-card {
+.Profile-card {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border-radius: 20px;
@@ -376,12 +376,12 @@ body::before {
     transition: all 0.3s ease;
 }
 
-.profile-card:hover {
+.Profile-card:hover {
     box-shadow: 0 12px 40px rgba(18, 52, 64, 0.12);
     transform: translateY(-2px);
 }
 
-.profile-card-header {
+.Profile-card-header {
     display: flex;
     align-items: center;
     gap: 20px;
@@ -406,25 +406,25 @@ body::before {
     flex-shrink: 0;
 }
 
-.profile-info {
+.Profile-info {
     flex: 1;
 }
 
-.profile-info h2 {
+.Profile-info h2 {
     color: var(--text-primary);
     font-size: 1.5rem;
     font-weight: 700;
     margin: 0 0 8px 0;
 }
 
-.profile-info .email {
+.Profile-info .email {
     color: var(--text-secondary);
     font-size: 0.95rem;
     margin: 0;
 }
 
 /* === Profile Stats === */
-.profile-stats {
+.Profile-stats {
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -711,7 +711,7 @@ input:checked + .slider:before {
         font-size: 28px;
     }
 
-    .profile-grid {
+    .Profile-grid {
         grid-template-columns: 1fr;
     }
 }
@@ -747,16 +747,16 @@ input:checked + .slider:before {
         font-size: 0.85rem;
     }
 
-    .profile-grid {
+    .Profile-grid {
         grid-template-columns: 1fr;
         gap: 15px;
     }
 
-    .profile-card {
+    .Profile-card {
         padding: 20px;
     }
 
-    .profile-card-header {
+    .Profile-card-header {
         flex-direction: column;
         text-align: center;
         margin-bottom: 20px;
@@ -769,11 +769,11 @@ input:checked + .slider:before {
         font-size: 2rem;
     }
 
-    .profile-info h2 {
+    .Profile-info h2 {
         font-size: 1.2rem;
     }
 
-    .profile-info .email {
+    .Profile-info .email {
         font-size: 0.85rem;
     }
 

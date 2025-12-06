@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin News - Hydrovoltiger</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="news-admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+  <div class="dashboard-container">
+
+    <!-- SIDEBAR NAV -->
+    <nav class="sidebar-nav">
+      <div class="nav-header">
+        <div class="nav-logo">
+          <ion-icon name="water-outline"></ion-icon>
+          <span>Hydrovoltiger</span>
+        </div>
+      </div>
+
+      <div class="nav-menu">
+          <a href="../main.html" class="nav-item">
+              <ion-icon name="home-outline"></ion-icon>
+              <span>Home</span>
+          </a>
+          <a href="../analytics/analytics.html" class="nav-item">
+              <ion-icon name="analytics-outline"></ion-icon>
+              <span>Analytics</span>
+          </a>
+          <a href="news.html" class="nav-item">
+              <ion-icon name="newspaper-outline"></ion-icon>
+              <span>News</span>
+          </a>
+          <a href="news-admin.html" class="nav-item active">
+              <ion-icon name="create-outline"></ion-icon>
+              <span>Admin News</span>
+          </a>
+          <a href="../device/device.html" class="nav-item">
+              <ion-icon name="hardware-chip-outline"></ion-icon>
+              <span>Device</span>
+          </a>
+          <a href="../Profile/Profile.html" class="nav-item">
+              <ion-icon name="person-outline"></ion-icon>
+              <span>Profile</span>
+          </a>
+      </div>
+
+      <!-- FOOTER USER -->
+      <div class="nav-footer">
+        <div class="user-info-nav" id="userInfoButton">
+          <div class="user-avatar-nav" id="userAvatarNav">A</div>
+
+          <div class="user-details-nav">
+            <span class="user-name-nav" id="userNameNav">Admin</span>
+            <span class="user-status">Online</span>
+          </div>
+
+          <ion-icon name="chevron-down-outline" class="dropdown-icon-nav"></ion-icon>
+        </div>
+
+        <div class="Profile-dropdown-nav" id="ProfileDropdownNav">
+          <div class="dropdown-item-nav">
+            <ion-icon name="settings-outline"></ion-icon>
+            <span>Setting</span>
+          </div>
+
+          <div class="dropdown-divider-nav"></div>
+
+          <div class="dropdown-item-nav logout" id="logoutButton">
+            <ion-icon name="log-out-outline"></ion-icon>
+            <span>Log Out</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- MOBILE NAV -->
+    <nav class="mobile-nav">
+        <a href="../main.html" class="mobile-nav-item">
+            <ion-icon name="home-outline"></ion-icon>
+            <span>Home</span>
+        </a>
+        <a href="news.html" class="mobile-nav-item">
+            <ion-icon name="newspaper-outline"></ion-icon>
+            <span>News</span>
+        </a>
+        <a href="news-admin.html" class="mobile-nav-item active">
+            <ion-icon name="create-outline"></ion-icon>
+            <span>Admin</span>
+        </a>
+        <a href="../Profile/Profile.html" class="mobile-nav-item">
+            <ion-icon name="person-outline"></ion-icon>
+            <span>Profile</span>
+        </a>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <div class="container">
+
+        <div class="page-header">
+          <div class="header-content">
+            <div>
+              <h1>News Administrator</h1>
+              <p>Manage Hydrovoltiger news and articles</p>
+            </div>
+            <a href="news.html" class="btn-view-news">
+              <ion-icon name="eye-outline"></ion-icon>
+              <span>View News</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- ADD NEWS FORM -->
+        <div class="admin-section">
+          <div class="section-header">
+            <h2>
+              <ion-icon name="add-circle-outline"></ion-icon>
+              Add News
+            </h2>
+          </div>
+
+          <form id="addNewsForm" class="news-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="newsTitle">
+                  <ion-icon name="text-outline"></ion-icon>
+                  News Headline *
+                </label>
+                <input type="text" id="newsTitle" required placeholder="Enter the news headline">
+              </div>
+
+              <div class="form-group">
+                <label for="newsCategory">
+                  <ion-icon name="pricetag-outline"></ion-icon>
+                  Kategori *
+                </label>
+                <select id="newsCategory" required>
+                  <option value="">Select Category</option>
+                  <option value="Teknologi">Technology</option>
+                  <option value="Energi Terbarukan">Renewable Energy</option>
+                  <option value="IoT">IoT</option>
+                  <option value="Hydrovoltiger">Hydrovoltiger</option>
+                  <option value="Tutorial">Tutorial</option>
+                  <option value="Umum">General</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="newsDate">
+                  <ion-icon name="calendar-outline"></ion-icon>
+                  Date *
+                </label>
+                <input type="date" id="newsDate" required>
+              </div>
+
+              <div class="form-group">
+                <label for="newsAuthor">
+                  <ion-icon name="person-outline"></ion-icon>
+                  Writter
+                </label>
+                <input type="text" id="newsAuthor" placeholder="Author's name (optional)">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="newsImage">
+                <ion-icon name="image-outline"></ion-icon>
+                Image URL *
+              </label>
+              <input type="url" id="newsImage" required placeholder="https://example.com/image.jpg">
+              <small>Enter the image URL from the internet</small>
+            </div>
+
+            <div class="form-group">
+              <label for="newsContent">
+                <ion-icon name="document-text-outline"></ion-icon>
+                News Content *
+              </label>
+              <textarea id="newsContent" required rows="12" placeholder="Write your news content here...
+
+Use the enter key to create a new paragraph.
+
+You can write a complete article with several paragraphs."></textarea>
+              <small>Use Enter to create a new paragraph</small>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-submit">
+                <ion-icon name="checkmark-circle-outline"></ion-icon>
+                <span>Publish News</span>
+              </button>
+              <button type="reset" class="btn-reset">
+                <ion-icon name="refresh-outline"></ion-icon>
+                <span>Reset Form</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- MANAGE EXISTING NEWS -->
+        <div class="admin-section">
+          <div class="section-header">
+            <h2>
+              <ion-icon name="list-outline"></ion-icon>
+              Manage News
+            </h2>
+          </div>
+
+          <div id="newsList" class="news-list">
+            <!-- Loaded dynamically -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- SUCCESS MODAL -->
+  <div id="successModal" class="modal">
+    <div class="modal-content success">
+      <ion-icon name="checkmark-circle-outline"></ion-icon>
+      <h3>News Successfully Published!</h3>
+      <p>Your news has been added and can be viewed on the news page.</p>
+      <button onclick="closeModal()" class="btn-modal">OK</button>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRMATION MODAL -->
+  <div id="deleteModal" class="modal">
+    <div class="modal-content danger">
+      <ion-icon name="trash-outline"></ion-icon>
+      <h3>Delete News?</h3>
+      <p>Are you sure you want to delete this news item? This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button onclick="confirmDelete()" class="btn-delete">Delete</button>
+        <button onclick="closeDeleteModal()" class="btn-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script type="module" src="news-admin.js"></script>
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>
