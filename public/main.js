@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const connectionRef = ref(db, ".info/connected");
   onValue(connectionRef, (snapshot) => {
     const connected = snapshot.val();
-    console.log("🔌 Firebase Connection Status:", connected ? "ONLINE" : "OFFLINE");
+    console.log("🔌 Firebase Connection Status:", connected ? "ONLINE ✅" : "OFFLINE ❌");
     
     if (connected) {
       indicator.classList.add("online");
@@ -42,8 +42,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if (userAvatarNav) userAvatarNav.textContent = initial;
       if (userNameNav) userNameNav.textContent = name;
 
-      startDashboard(); // Mulai logika dasbor
-      initAiAssistant(initial); // Mulai logika AI Assistant
+      // Tunggu sebentar untuk memastikan DOM siap
+      setTimeout(() => {
+        startDashboard(); // Mulai logika dasbor
+        initAiAssistant(initial); // Mulai logika AI Assistant
+      }, 500);
     } else {
       console.log("❌ No user logged in, redirecting to login...");
       window.location.href = "./login/login.html";
@@ -53,6 +56,17 @@ document.addEventListener("DOMContentLoaded", () => {
   // === LOGIKA DASHBOARD ===
   function startDashboard() {
     console.log("📊 Starting Dashboard...");
+    
+    // Cek apakah semua elemen DOM ada
+    const requiredElements = ['voltage', 'current', 'power', 'rpm', 'totalPower', 'duration', 'efficiency', 'realtimeChart', 'dataTableBody'];
+    const missingElements = requiredElements.filter(id => !document.getElementById(id));
+    
+    if (missingElements.length > 0) {
+      console.error("❌ Missing DOM elements:", missingElements);
+      return;
+    }
+    
+    console.log("✅ All DOM elements found");
     
     let realtimeData = { labels: [], voltage: [], current: [], power: [], rpm: [] };
     let dailyData = { labels: [], voltage: [], current: [], power: [], rpm: [], timestamps: [] };
@@ -287,6 +301,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    // === INITIALIZE CHART ===
     const ctx = document.getElementById("realtimeChart").getContext("2d");
     const chart = new Chart(ctx, {
       type: "line",
@@ -295,31 +310,44 @@ document.addEventListener("DOMContentLoaded", () => {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
-          y: { title: { display: true, text: "V / A / W" } },
-          y1: { position: "right", title: { display: true, text: "RPM" }, grid: { drawOnChartArea: false } },
+          y: { 
+            title: { display: true, text: "V / A / W" },
+            beginAtZero: true
+          },
+          y1: { 
+            position: "right", 
+            title: { display: true, text: "RPM" }, 
+            grid: { drawOnChartArea: false },
+            beginAtZero: true
+          },
         },
-        plugins: { legend: { display: true, position: "top" } },
+        plugins: { 
+          legend: { display: true, position: "top" },
+          tooltip: { mode: 'index', intersect: false }
+        },
       },
     });
+
+    console.log("✅ Chart initialized");
 
     function setChartData(source) {
       if (!source || !source.labels || source.labels.length === 0) {
         // Jika tidak ada data, tampilkan pesan
-        chart.data.labels = ['Tidak ada data'];
+        chart.data.labels = ['Menunggu data...'];
         chart.data.datasets = [
-          { label: "Tegangan (V)", data: [0], borderColor: "#e53e3e", tension: 0.4 },
-          { label: "Arus (A)", data: [0], borderColor: "#3182ce", tension: 0.4 },
-          { label: "Daya (W)", data: [0], borderColor: "#38a169", tension: 0.4 },
-          { label: "RPM", data: [0], borderColor: "#d69e2e", yAxisID: "y1", tension: 0.4 },
+          { label: "Tegangan (V)", data: [0], borderColor: "#e53e3e", tension: 0.4, fill: false },
+          { label: "Arus (A)", data: [0], borderColor: "#3182ce", tension: 0.4, fill: false },
+          { label: "Daya (W)", data: [0], borderColor: "#38a169", tension: 0.4, fill: false },
+          { label: "RPM", data: [0], borderColor: "#d69e2e", yAxisID: "y1", tension: 0.4, fill: false },
         ];
       } else {
         // Tampilkan data yang ada
         chart.data.labels = source.labels;
         chart.data.datasets = [
-          { label: "Tegangan (V)", data: source.voltage || [], borderColor: "#e53e3e", tension: 0.4 },
-          { label: "Arus (A)", data: source.current || [], borderColor: "#3182ce", tension: 0.4 },
-          { label: "Daya (W)", data: source.power || [], borderColor: "#38a169", tension: 0.4 },
-          { label: "RPM", data: source.rpm || [], borderColor: "#d69e2e", yAxisID: "y1", tension: 0.4 },
+          { label: "Tegangan (V)", data: source.voltage || [], borderColor: "#e53e3e", tension: 0.4, fill: false },
+          { label: "Arus (A)", data: source.current || [], borderColor: "#3182ce", tension: 0.4, fill: false },
+          { label: "Daya (W)", data: source.power || [], borderColor: "#38a169", tension: 0.4, fill: false },
+          { label: "RPM", data: source.rpm || [], borderColor: "#d69e2e", yAxisID: "y1", tension: 0.4, fill: false },
         ];
       }
 
@@ -393,7 +421,7 @@ document.addEventListener("DOMContentLoaded", () => {
       
       onValue(historyRef, (snapshot) => {
         if (!snapshot.exists()) {
-          console.log("📚 No history data found");
+          console.log("📚 No history data found - Starting fresh");
           return;
         }
 
@@ -467,33 +495,59 @@ document.addEventListener("DOMContentLoaded", () => {
         power: parseFloat(data.power || 0).toFixed(2),
         rpm: parseFloat(data.rpm || 0).toFixed(2),
         timestamp: timestamp
-      }).then(() => {
-        // console.log("✅ History saved successfully");
       }).catch((error) => {
         console.error("❌ Error saving history:", error);
       });
     }
 
-    // Listen untuk perubahan data realtime
+    // === LISTEN UNTUK PERUBAHAN DATA REALTIME ===
     console.log("👂 Setting up PLTMH listener...");
+    console.log("📍 Database path: PLTMH");
     
     onValue(pltmhRef, (snapshot) => {
+      console.log("📡 Data snapshot received");
+      console.log("🔍 Snapshot exists:", snapshot.exists());
+      
       if (!snapshot.exists()) {
         console.warn("⚠️ PLTMH data does not exist in Firebase!");
-        console.log("💡 Please add data manually in Firebase Console");
+        console.log("💡 Troubleshooting:");
+        console.log("1. Buka Firebase Console: https://console.firebase.google.com/");
+        console.log("2. Pilih project: hydrovoltiger-e2d28");
+        console.log("3. Buka Realtime Database");
+        console.log("4. Pastikan ada node 'PLTMH' dengan struktur:");
+        console.log(`{
+  "PLTMH": {
+    "Tegangan_V": 220,
+    "Arus_mA": 5,
+    "Daya_mW": 1100,
+    "RPM_Turbin": 1500,
+    "Total_Energi_mWh": 100
+  }
+}`);
+        
+        // Tampilkan data dummy untuk development
+        console.log("🔧 Using dummy data for development");
         return;
       }
       
       const data = snapshot.val();
-      console.log("📊 PLTMH data received:", data);
+      console.log("📦 Raw Firebase data:", data);
+      console.log("📋 Available keys:", Object.keys(data));
 
-      const voltage = parseFloat(data.Tegangan_V || 0);
-      const current = parseFloat(data.Arus_mA || 0);
-      const power = parseFloat(data.Daya_mW || 0);
-      const rpm = parseFloat(data.RPM_Turbin || 0);
-      const totalEnergy = parseFloat(data.Total_Energi_mWh || 0);
+      // Parse data dengan validasi
+      const voltage = parseFloat(data.Tegangan_V || data.tegangan || data.voltage || 0);
+      const current = parseFloat(data.Arus_mA || data.arus || data.current || 0);
+      const power = parseFloat(data.Daya_mW || data.daya || data.power || 0);
+      const rpm = parseFloat(data.RPM_Turbin || data.rpm || data.RPM || 0);
+      const totalEnergy = parseFloat(data.Total_Energi_mWh || data.totalEnergy || 0);
 
       console.log("✅ Parsed values:", { voltage, current, power, rpm, totalEnergy });
+
+      // Validasi data
+      if (isNaN(voltage) || isNaN(current) || isNaN(power) || isNaN(rpm)) {
+        console.error("❌ Invalid data received - some values are NaN");
+        return;
+      }
 
       // Simpan data ke histori
       saveToHistory({
@@ -510,11 +564,42 @@ document.addEventListener("DOMContentLoaded", () => {
       const rpmEl = document.getElementById("rpm");
       const totalPowerEl = document.getElementById("totalPower");
 
-      if (voltageEl) voltageEl.textContent = voltage.toFixed(2);
-      if (currentEl) currentEl.textContent = current.toFixed(2);
-      if (powerEl) powerEl.textContent = power.toFixed(2);
-      if (rpmEl) rpmEl.textContent = rpm.toFixed(2);
-      if (totalPowerEl) totalPowerEl.textContent = totalEnergy.toFixed(4);
+      console.log("🎯 Updating DOM elements...");
+      
+      if (voltageEl) {
+        voltageEl.textContent = voltage.toFixed(2);
+        console.log("✅ Voltage updated:", voltage.toFixed(2));
+      } else {
+        console.error("❌ Voltage element not found");
+      }
+      
+      if (currentEl) {
+        currentEl.textContent = current.toFixed(2);
+        console.log("✅ Current updated:", current.toFixed(2));
+      } else {
+        console.error("❌ Current element not found");
+      }
+      
+      if (powerEl) {
+        powerEl.textContent = power.toFixed(2);
+        console.log("✅ Power updated:", power.toFixed(2));
+      } else {
+        console.error("❌ Power element not found");
+      }
+      
+      if (rpmEl) {
+        rpmEl.textContent = rpm.toFixed(2);
+        console.log("✅ RPM updated:", rpm.toFixed(2));
+      } else {
+        console.error("❌ RPM element not found");
+      }
+      
+      if (totalPowerEl) {
+        totalPowerEl.textContent = totalEnergy.toFixed(4);
+        console.log("✅ Total power updated:", totalEnergy.toFixed(4));
+      } else {
+        console.error("❌ Total power element not found");
+      }
 
       // Duration calculation
       let durationText = "00:00:00";
@@ -547,6 +632,8 @@ document.addEventListener("DOMContentLoaded", () => {
       realtimeData.power.push(power);
       realtimeData.rpm.push(rpm);
 
+      console.log("📊 Realtime data updated, total points:", realtimeData.labels.length);
+
       // Keep only last 10 data points untuk realtime
       if (realtimeData.labels.length > 10) {
         Object.keys(realtimeData).forEach((key) => realtimeData[key].shift());
@@ -565,12 +652,30 @@ document.addEventListener("DOMContentLoaded", () => {
       if (activeTab && activeTab.dataset.chartType === "realtime") {
         setChartData(realtimeData);
         updateDataTable();
+        console.log("✅ Chart and table updated");
       }
+      
+      console.log("✅ Data processing complete");
+      
     }, (error) => {
-      console.error("❌ Firebase PLTMH Error:", error.message);
+      console.error("❌ Firebase PLTMH Error:", error);
+      console.error("📋 Error details:");
+      console.error("  - Code:", error.code);
+      console.error("  - Message:", error.message);
+      
       if (error.code === "PERMISSION_DENIED") {
-        console.error("🚫 PERMISSION DENIED! Check Firebase Rules");
-        console.log("💡 Make sure user is authenticated and rules allow read access");
+        console.error("🚫 PERMISSION DENIED!");
+        console.log("💡 Solutions:");
+        console.log("1. Check Firebase Rules in Console");
+        console.log("2. Make sure you're authenticated");
+        console.log("3. Current user:", auth.currentUser?.email || "NOT LOGGED IN");
+        console.log("4. Try this Firebase rule:");
+        console.log(`{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null"
+  }
+}`);
       }
     });
 

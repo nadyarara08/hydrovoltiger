@@ -711,11 +711,6 @@ body::before {
     transform: scale(1.05);
 }
 
-/* === Footer === */
-.footer {
-    display: none;
-}
-
 /* === Toast Message === */
 .toast-message {
     position: fixed;

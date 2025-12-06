@@ -373,6 +373,49 @@ body::before {
 }
 
 /* ===========================
+ MAP LEGEND
+=========================== */
+.map-legend {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 10px 12px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(18, 52, 64, 0.15);
+  border: 1px solid rgba(18, 52, 64, 0.1);
+  font-family: 'Inter', sans-serif;
+  pointer-events: all;
+}
+
+.map-legend h4 {
+  margin: 0 0 8px 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.map-legend .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 0.75rem;
+  color: var(--text-primary);
+}
+
+.map-legend .legend-item:last-child {
+  margin-bottom: 0;
+}
+
+.map-legend .legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+/* ===========================
  DEVICE GRID
 =========================== */
 .device-grid {
@@ -581,6 +624,27 @@ body::before {
     height: 300px;
     margin-bottom: 25px;
     border-radius: 16px;
+  }
+
+  /* MAP LEGEND - MOBILE */
+  .map-legend {
+    padding: 8px 10px;
+  }
+
+  .map-legend h4 {
+    font-size: 0.7rem;
+    margin-bottom: 6px;
+  }
+
+  .map-legend .legend-item {
+    font-size: 0.7rem;
+    gap: 6px;
+    margin-bottom: 5px;
+  }
+
+  .map-legend .legend-dot {
+    width: 10px;
+    height: 10px;
   }
 
   .device-grid {
