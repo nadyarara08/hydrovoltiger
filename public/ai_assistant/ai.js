@@ -1,3 +1,4 @@
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import showdown from "https://esm.run/showdown";
 import { ref, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 import { db } from "../auth/firebase-init.js";
@@ -61,26 +62,35 @@ function closeChat() {
  * Get real-time data from Firebase
  */
 function listenToRealtimeData() {
-  const pltmhRef = ref(db, "PLTMH");
+  const auth = getAuth();
   
-  onValue(pltmhRef, (snapshot) => {
-    if (!snapshot.exists()) {
-      console.warn("PLTMH data not found in Firebase");
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      console.warn("User not authenticated. Please sign in to view real-time data.");
       return;
     }
-    const data = snapshot.val();
-
-    currentData = {
-      voltage: parseFloat(data.Tegangan_V || 0),
-      current: parseFloat(data.Arus_mA || 0),
-      power: parseFloat(data.Daya_mW || 0),
-      rpm: parseFloat(data.RPM_Turbin || 0),
-      totalEnergy: parseFloat(data.Total_Energi_mWh || 0)
-    };
     
-    console.log("PLTMH data updated:", currentData);
-  }, (error) => {
-    console.error("Error listening to Firebase:", error);
+    const pltmhRef = ref(db, "PLTMH");
+    
+    onValue(pltmhRef, (snapshot) => {
+      if (!snapshot.exists()) {
+        console.warn("PLTMH data not found in Firebase");
+        return;
+      }
+      const data = snapshot.val();
+
+      currentData = {
+        voltage: parseFloat(data.Tegangan_V || 0),
+        current: parseFloat(data.Arus_mA || 0),
+        power: parseFloat(data.Daya_mW || 0),
+        rpm: parseFloat(data.RPM_Turbin || 0),
+        totalEnergy: parseFloat(data.Total_Energi_mWh || 0)
+      };
+      
+      console.log("PLTMH data updated:", currentData);
+    }, (error) => {
+      console.error("Error listening to Firebase:", error);
+    });
   });
 }
 
