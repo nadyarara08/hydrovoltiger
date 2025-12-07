@@ -213,13 +213,7 @@ async function handleGoogleSignIn() {
   const loading = showLoading();
   
   try {
-    // Check if popups are blocked
-    const popup = window.open('', '_blank');
-    if (popup === null || popup.closed || typeof popup.closed === 'undefined') {
-      throw new Error('popup-blocked');
-    }
-    popup.close();
-
+    // Try to sign in with Google
     const result = await signInWithPopup(auth, googleProvider);
     handleSuccessfulLogin(result.user);
   } catch (error) {
