@@ -506,10 +506,11 @@ body::before {
 
 .device-info .info-item {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   padding: 8px 0;
   border-bottom: 1px solid rgba(18, 52, 64, 0.08);
   font-size: 0.9rem;
+  gap: 4px;
 }
 
 .device-info .info-item:last-child {
@@ -519,11 +520,14 @@ body::before {
 .device-info .info-item span:first-child {
   color: var(--text-secondary);
   font-weight: 500;
+  font-size: 0.85rem;
 }
 
 .device-info .info-item span:last-child {
   color: var(--text-primary);
   font-weight: 600;
+  word-break: break-all;
+  overflow-wrap: break-word;
 }
 
 .btn-detail {
