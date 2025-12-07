@@ -52,27 +52,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // === DROPDOWN Profile SIDEBAR ===
+  // === DROPDOWN profile SIDEBAR ===
   const userInfoButton = document.getElementById("userInfoButton");
-  const ProfileDropdownNav = document.getElementById("ProfileDropdownNav");
+  const profileDropdownNav = document.getElementById("profileDropdownNav");
   const dropdownIconNav = document.getElementById("dropdownIconNav");
 
-  if (userInfoButton && ProfileDropdownNav) {
+  if (userInfoButton && profileDropdownNav) {
     userInfoButton.addEventListener("click", () => {
-      ProfileDropdownNav.classList.toggle("show");
+      profileDropdownNav.classList.toggle("show");
       dropdownIconNav.classList.toggle("rotated");
     });
 
     document.addEventListener("click", (e) => {
-      if (!userInfoButton.contains(e.target) && !ProfileDropdownNav.contains(e.target)) {
-        ProfileDropdownNav.classList.remove("show");
+      if (!userInfoButton.contains(e.target) && !profileDropdownNav.contains(e.target)) {
+        profileDropdownNav.classList.remove("show");
         dropdownIconNav.classList.remove("rotated");
       }
     });
 
     // === AKSI TOMBOL DROPDOWN ===
-    const settingsItemNav = ProfileDropdownNav.querySelector(".dropdown-item-nav:nth-child(1)");
-    const logoutItemNav = ProfileDropdownNav.querySelector(".dropdown-item-nav.logout");
+    const settingsItemNav = profileDropdownNav.querySelector(".dropdown-item-nav:nth-child(1)");
+    const logoutItemNav = profileDropdownNav.querySelector(".dropdown-item-nav.logout");
 
     if (settingsItemNav) {
       settingsItemNav.addEventListener("click", () => {
