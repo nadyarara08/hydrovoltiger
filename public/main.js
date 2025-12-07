@@ -532,7 +532,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("✅ Dashboard ready!");
   }
 
-  // ======== PROFILE DROPDOWN ========
+  // ======== profile DROPDOWN ========
   const userInfoButton = document.getElementById("userInfoButton");
   const profileDropdownNav = document.getElementById("profileDropdownNav");
   const dropdownIconNav = document.getElementById("dropdownIconNav");

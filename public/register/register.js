@@ -4,7 +4,7 @@ import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
-  updateProfile
+  updateprofile
 } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js';
 
 // Firebase configuration
@@ -135,8 +135,8 @@ registerForm.addEventListener('submit', async (e) => {
     // Create user with email and password
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     
-    // Update user Profile with name
-    await updateProfile(userCredential.user, {
+    // Update user profile with name
+    await updateprofile(userCredential.user, {
       displayName: name
     });
     

@@ -10,6 +10,13 @@
       ".read": "auth != null",  
       ".write": "auth != null"
     },
+    "history": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$timestamp": {
+        ".validate": "newData.hasChildren(['voltage', 'current', 'power', 'rpm', 'timestamp'])"
+      }
+    },
     "Devices": {
       ".read": true,
       ".write": "auth != null"
