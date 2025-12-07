@@ -684,6 +684,73 @@ body::before {
   }
 }
 
+/* Medium Screens (768px - 480px) */
+@media (max-width: 768px) and (min-width: 481px) {
+  .page-header h1 {
+    font-size: 2rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .page-header p {
+    font-size: 1rem;
+  }
+
+  .section-title {
+    font-size: 1.4rem;
+  }
+
+  .device-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .device-card {
+    padding: 20px;
+  }
+
+  .device-card h3 {
+    font-size: 1.3rem;
+  }
+
+  .device-info .info-item {
+    font-size: 0.9rem;
+  }
+}
+
+/* Small Screens (480px - 361px) */
+@media (max-width: 480px) and (min-width: 361px) {
+  .page-header h1 {
+    font-size: 1.8rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .page-header p {
+    font-size: 0.95rem;
+  }
+
+  .section-title {
+    font-size: 1.3rem;
+  }
+
+  .device-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .device-card {
+    padding: 18px;
+  }
+
+  .device-card h3 {
+    font-size: 1.2rem;
+  }
+
+  .device-info .info-item {
+    font-size: 0.85rem;
+  }
+}
+
+/* Extra Small Screens (360px and below) */
 @media (max-width: 360px) {
   .main-content {
     padding-bottom: 100px;
