@@ -1,11 +1,11 @@
 # Hydrovoltiger
 
-Sistem monitoring berbasis web, dengan integrasi Firebase untuk autentikasi dan database, serta AI Assistant berbasis Gemini untuk analisis dan penjelasan kondisi sistem.
+Sistem monitoring berbasis web, dengan integrasi Firebase untuk autentikasi dan database, serta AI Assistant berbasis Google Gemini untuk analisis dan penjelasan kondisi sistem.
 
 Repo ini berisi:
 - Halaman login, dashboard utama, dan komponen pendukung (HTML/CSS/JS).
 - Integrasi Firebase (Auth, Realtime Database, Storage).
-- AI Assistant di sisi frontend yang memanggil backend Node.js kecil untuk mengakses Gemini API secara aman (menggunakan `.env`).
+- AI Assistant di sisi frontend yang memanggil backend Node.js kecil untuk mengakses OpenAI API secara aman (menggunakan `.env`).
 
 ---
 
@@ -13,7 +13,7 @@ Repo ini berisi:
 
 - Node.js dan npm ter‑install.
 - Akun Firebase dan project yang sudah dikonfigurasi (sudah digunakan di file JS kamu).
-- API Key Gemini dari **Google AI Studio / Google AI for Developers**.
+- API Key dari **Google Gemini** (dapatkan dari [Google AI Studio](https://aistudio.google.com/app/apikey)).
 
 ---
 
@@ -22,8 +22,13 @@ Repo ini berisi:
 Buat file `.env` di root project (sudah di‑ignore di `.gitignore`). Contoh minimal untuk AI backend:
 
 ```env
-GEMINI_API_KEY=API_KEY_GEMINI_DARI_GOOGLE_AI_STUDIO
+# API key untuk Google Gemini
+GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
+
+# Model Gemini yang digunakan (default: gemini-2.0-flash)
 GEMINI_MODEL=gemini-2.0-flash
+
+# Port backend Node.js
 PORT=3000
 ```
 
@@ -42,12 +47,12 @@ npm install
 ```
 
 Ini akan meng‑install:
-- `express`, `cors`, `dotenv` untuk backend AI.
+- `express`, `cors`, `dotenv`, dan `node-fetch` untuk backend AI.
 - `firebase` dan `live-server` sesuai kebutuhan project.
 
 ---
 
-## 4. Menjalankan Backend AI (Gemini)
+## 4. Menjalankan Backend AI (Google Gemini)
 
 Backend AI didefinisikan di `server.js` dan menggunakan `.env` untuk membaca `GEMINI_API_KEY`.
 
@@ -60,7 +65,7 @@ npm start
 Secara default server akan berjalan di `http://localhost:3000` dengan endpoint:
 
 - `GET  /api/health` → pengecekan kesehatan server.
-- `POST /api/ai`     → menerima `{ prompt }` dan mengembalikan `{ text }` dari Gemini.
+- `POST /api/ai`     → menerima `{ prompt }` dan mengembalikan `{ text }` dari Google Gemini.
 
 Jika `GEMINI_API_KEY` belum diset, server akan memperingatkan di console dan permintaan ke `/api/ai` akan gagal.
 
@@ -95,8 +100,8 @@ Pastikan backend (`npm start`) sudah berjalan, karena AI Assistant di frontend m
   - Menampilkan respons AI (Markdown → HTML) di panel chat.
 
 - Backend (`server.js`):
-  - Membaca `GEMINI_API_KEY` dan `GEMINI_MODEL` dari `.env`.
-  - Memanggil endpoint resmi Gemini: `https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent`.
+  - Membaca `GEMINI_API_KEY` dari `.env`.
+  - Memanggil Google Gemini API menggunakan fetch API.
   - Mengembalikan teks hasil AI ke frontend.
 
 Dengan arsitektur ini, API key Gemini **tidak pernah muncul di kode frontend** dan tidak ikut ter‑publish ketika project di‑hosting sebagai static site.

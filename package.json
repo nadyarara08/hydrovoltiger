@@ -12,17 +12,17 @@
   },
   "license": "ISC",
   "author": "nadya",
-  "type": "commonjs",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node public/auth/server.js"
   },
   "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.0",
+    "express": "^4.21.0",
     "firebase": "^12.6.0",
     "live-server": "^1.2.2",
-    "express": "^4.21.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.0"
+    "@google/generative-ai": "^0.1.2"
   }
 }

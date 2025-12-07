@@ -294,19 +294,20 @@ If the user sends a message unrelated to monitoring, respond in a friendly but r
     });
 
     if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
       if (response.status === 429) {
         return "⚠️ **Warning**: AI quota is currently full. Please try again later or contact the administrator.";
       } else if (response.status === 502) {
         return "⚠️ **Warning**: AI server is currently experiencing issues. Please try again later.";
       }
-      return `**Error**: Failed to connect to AI backend (code: ${response.status}).`;
+      return `**Error**: ${errorData.error || `Failed to connect to AI backend (code: ${response.status})`}.`;
     }
 
     const data = await response.json();
     return data.text || "No response from AI.";
   } catch (error) {
     console.error("AI Response Error:", error);
-    return `**Error**: Network error occurred while connecting to AI backend.`;
+    return `**Error**: Failed to connect to AI server. Please check your internet connection.`;
   }
 }
 
