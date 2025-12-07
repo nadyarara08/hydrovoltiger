@@ -684,7 +684,7 @@ body::before {
   }
 }
 
-@media (max-width: 350px) {
+@media (max-width: 360px) {
   .main-content {
     padding-bottom: 100px;
   }
